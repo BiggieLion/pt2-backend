@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigurationModule } from '../configuration';
+import { EntityClassOrSchema } from '@nestjs/typeorm/dist/interfaces/entity-class-or-schema.type';
 
 @Module({
   imports: [
@@ -15,10 +16,15 @@ import { ConfigurationModule } from '../configuration';
         password: configSvc.getOrThrow('database.password'),
         database: configSvc.getOrThrow('database.database'),
         synchronize: true,
+        autoLoadEntities: true,
         logging: true,
       }),
       inject: [ConfigService],
     }),
   ],
 })
-export class DatabaseModule {}
+export class DatabaseModule {
+  static forFeature(models: EntityClassOrSchema[]) {
+    return TypeOrmModule.forFeature(models);
+  }
+}
