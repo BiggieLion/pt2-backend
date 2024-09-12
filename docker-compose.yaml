@@ -1,0 +1,22 @@
+version: "3"
+services:
+  request:
+    build:
+      context: .
+      dockerfile: ./apps/request/Dockerfile
+      target: development
+    command: npm run start:dev request
+    ports:
+      - '3000:3000'
+    depends_on:
+      - db
+    volumes:
+      - .:/usr/src/app
+
+  db:
+    container_name: risky_db
+    image: postgres:15.7
+    env_file:
+      - docker.env
+    ports:
+      - '54320:5432'
