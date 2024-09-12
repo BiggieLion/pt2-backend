@@ -17,7 +17,7 @@ import { EntityClassOrSchema } from '@nestjs/typeorm/dist/interfaces/entity-clas
         database: configSvc.getOrThrow('database.database'),
         synchronize: true,
         autoLoadEntities: true,
-        logging: true,
+        logging: false,
       }),
       inject: [ConfigService],
     }),

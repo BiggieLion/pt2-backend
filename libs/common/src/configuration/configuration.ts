@@ -7,6 +7,6 @@ export const configuration = () => ({
     username: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_DBNAME,
-    logging: process.env.DB_LOGGING,
+    logging: process.env.DB_LOGGING || false,
   },
 });

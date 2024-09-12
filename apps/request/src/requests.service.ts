@@ -9,7 +9,6 @@ export class RequestsService {
   constructor(private readonly requestRepository: RequestRepository) {}
 
   create(createRequestDto: CreateRequestDto) {
-    console.log('createRequestDto', createRequestDto);
     const request = new Request({ ...createRequestDto });
     return this.requestRepository.create(request);
   }

@@ -1,16 +1,26 @@
-import { IsBoolean, IsNumber, IsOptional, IsString } from 'class-validator';
+import {
+  IsBoolean,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 export class CreateRequestDto {
   @IsNumber()
+  @IsNotEmpty()
   requester_id: number;
 
   @IsNumber()
+  @IsNotEmpty()
   analyst_id: number;
 
   @IsNumber()
+  @IsNotEmpty()
   supervisor_id: number;
 
   @IsNumber()
+  @IsNotEmpty()
   credit_id: number;
 
   @IsString()
