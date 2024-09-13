@@ -13,6 +13,19 @@ services:
     volumes:
       - .:/usr/src/app
 
+  auth:
+    build:
+      context: .
+      dockerfile: ./apps/auth/Dockerfile
+      target: development
+    command: npm run start:dev auth
+    ports:
+      - '3001:3001'
+    depends_on:
+      - db
+    volumes:
+      - .:/usr/src/app
+
   db:
     container_name: risky_db
     image: postgres:15.7

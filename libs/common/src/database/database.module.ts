@@ -25,6 +25,7 @@ import { EntityClassOrSchema } from '@nestjs/typeorm/dist/interfaces/entity-clas
 })
 export class DatabaseModule {
   static forFeature(entity: EntityClassOrSchema[]) {
+    console.log('entity...', entity);
     return TypeOrmModule.forFeature(entity);
   }
 }
