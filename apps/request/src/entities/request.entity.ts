@@ -1,5 +1,5 @@
 import { AbstractEntity } from '@app/common';
-import { Column, Entity } from 'typeorm';
+import { Column, CreateDateColumn, Entity, UpdateDateColumn } from 'typeorm';
 
 @Entity('request')
 export class Request extends AbstractEntity<Request> {
@@ -26,4 +26,17 @@ export class Request extends AbstractEntity<Request> {
 
   @Column({ nullable: false, type: 'boolean', default: false })
   is_approved: boolean;
+
+  @CreateDateColumn({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP(6)',
+  })
+  created_at: Date;
+
+  @UpdateDateColumn({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP(6)',
+    onUpdate: 'CURRENT_TIMESTAMP(6)',
+  })
+  updated_at: Date;
 }

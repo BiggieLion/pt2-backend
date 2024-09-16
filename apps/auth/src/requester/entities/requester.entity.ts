@@ -3,7 +3,7 @@ import { Column, CreateDateColumn, Entity, UpdateDateColumn } from 'typeorm';
 
 @Entity('requester')
 export class Requester extends AbstractEntity<Requester> {
-  @Column({ nullable: false, type: 'varchar' })
+  @Column({ nullable: false, type: 'varchar', unique: true })
   curp: string;
 
   @Column({ nullable: false, type: 'varchar' })
@@ -12,13 +12,13 @@ export class Requester extends AbstractEntity<Requester> {
   @Column({ nullable: false, type: 'varchar' })
   lastname: string;
 
-  @Column({ nullable: false, type: 'varchar' })
+  @Column({ nullable: false, type: 'varchar', unique: true })
   rfc: string;
 
   @Column({ nullable: false, type: 'numeric' })
   monthly_income: number;
 
-  @Column({ nullable: false, type: 'varchar' })
+  @Column({ nullable: false, type: 'varchar', unique: true })
   email: string;
 
   @Column({ nullable: false, type: 'varchar' })

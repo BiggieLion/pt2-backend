@@ -3,6 +3,7 @@ import {
   IsBoolean,
   IsDate,
   IsEmail,
+  IsIn,
   IsNotEmpty,
   IsNumber,
   IsString,
@@ -46,6 +47,9 @@ export class CreateRequesterDto {
 
   @IsString()
   @IsNotEmpty()
+  @IsIn(['M', 'F'], {
+    message: 'Gender must be either M for Masculino or F for Femeninto',
+  })
   gender: string;
 
   @IsNumber()
