@@ -2,6 +2,7 @@ import { Type } from 'class-transformer';
 import {
   IsDate,
   IsEmail,
+  IsIn,
   IsInt,
   IsNotEmpty,
   IsString,
@@ -23,6 +24,13 @@ export class CreateStaffDto {
   @Min(18, { message: 'Age must be greater than or equal to 18' })
   @Max(99)
   age: number;
+
+  @IsString()
+  @IsNotEmpty()
+  @IsIn(['M', 'F'], {
+    message: 'Gender must be either M for Masculino or F for Femeninto',
+  })
+  gender: string;
 
   @IsEmail()
   @IsNotEmpty()

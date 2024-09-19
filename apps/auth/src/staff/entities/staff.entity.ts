@@ -12,11 +12,14 @@ export class Staff extends AbstractEntity<Staff> {
   @Column({ nullable: false, type: 'smallint' })
   age: number;
 
-  @Column({ nullable: false, type: 'varchar' })
+  @Column({ nullable: false, type: 'varchar', unique: true })
   email: string;
 
   @Column({ nullable: false, type: 'varchar' })
   password: string;
+
+  @Column({ nullable: false, type: 'char' })
+  gender: string;
 
   @Column({ nullable: false, type: 'date' })
   birthdate: Date;
@@ -26,6 +29,9 @@ export class Staff extends AbstractEntity<Staff> {
 
   @Column({ nullable: false, type: 'smallint' })
   rol: number;
+
+  @Column({ nullable: false, type: 'boolean', default: false })
+  is_eval_credit: boolean;
 
   @CreateDateColumn({
     type: 'timestamp',

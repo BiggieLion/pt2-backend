@@ -27,7 +27,7 @@ export class Requester extends AbstractEntity<Requester> {
   @Column({ nullable: false, type: 'varchar' })
   address: string;
 
-  @Column({ nullable: false, type: 'varchar' })
+  @Column({ nullable: false, type: 'char' })
   gender: string;
 
   @Column({ nullable: false, type: 'smallint' })
