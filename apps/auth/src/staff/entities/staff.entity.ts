@@ -1,14 +1,7 @@
 import { AbstractEntity } from '@app/common';
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  TableInheritance,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Column, CreateDateColumn, Entity, UpdateDateColumn } from 'typeorm';
 
 @Entity('staff')
-@TableInheritance({ column: { type: 'varchar', name: 'type' } })
 export class Staff extends AbstractEntity<Staff> {
   @Column({ nullable: false, type: 'varchar' })
   firstname: string;
