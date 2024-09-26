@@ -9,4 +9,8 @@ export const configuration = () => ({
     database: process.env.DB_DBNAME,
     logging: process.env.DB_LOGGING || false,
   },
+  cognito: {
+    userPoolId: process.env.COGNITO_USER_POOL_ID,
+    clientId: process.env.COGNITO_CLIENT_ID,
+  },
 });

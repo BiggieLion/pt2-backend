@@ -9,4 +9,6 @@ export const validationSchema = Joi.object({
   DB_PASSWORD: Joi.string().required(),
   DB_DBNAME: Joi.string().required(),
   DB_LOGGING: Joi.boolean().required(),
+  COGNITO_USER_POOL_ID: Joi.string().required(),
+  COGNITO_CLIENT_ID: Joi.string().required(),
 });
