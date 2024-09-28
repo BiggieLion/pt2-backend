@@ -14,7 +14,7 @@ export class CognitoController {
   constructor(private awsCognitoSvc: CognitoService) {}
 
   @Post('register')
-  async register(@Body() registerUserDto: RegisterUserDto) {
+  registerUser(@Body() registerUserDto: RegisterUserDto) {
     return this.awsCognitoSvc.registerUser(registerUserDto);
   }
 

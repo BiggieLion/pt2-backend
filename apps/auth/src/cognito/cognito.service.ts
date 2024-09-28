@@ -1,3 +1,7 @@
+import {
+  AdminAddUserToGroupCommand,
+  CognitoIdentityProviderClient,
+} from '@aws-sdk/client-cognito-identity-provider';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import {
@@ -5,23 +9,34 @@ import {
   CognitoUser,
   CognitoUserAttribute,
   CognitoUserPool,
+  CognitoUserSession,
 } from 'amazon-cognito-identity-js';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
 
 @Injectable()
 export class CognitoService {
-  private userPool: CognitoUserPool;
+  private readonly userPool: CognitoUserPool;
+  private readonly cognitoIdentitySvcProvider: CognitoUserSession;
+  private readonly providerClient: CognitoIdentityProviderClient;
 
   constructor(private configSvc: ConfigService) {
     this.userPool = new CognitoUserPool({
       UserPoolId: configSvc.getOrThrow('cognito.userPoolId'),
       ClientId: configSvc.getOrThrow('cognito.clientId'),
     });
+
+    this.providerClient = new CognitoIdentityProviderClient({
+      region: configSvc.getOrThrow('aws.region'),
+      credentials: {
+        accessKeyId: configSvc.getOrThrow('aws.accessKey'),
+        secretAccessKey: configSvc.getOrThrow('aws.secretKey'),
+      },
+    });
   }
 
-  async registerUser(registerUserDTO: RegisterUserDto) {
-    const { name, email, password, rfc, curp } = registerUserDTO;
+  registerUser(registerUserDto: RegisterUserDto) {
+    const { name, email, password, rfc, curp } = registerUserDto;
 
     return new Promise((resolve, reject) => {
       this.userPool.signUp(
@@ -42,11 +57,24 @@ export class CognitoService {
           }),
         ],
         null,
-        (err, result) => {
-          if (!result) {
+        async (err, res) => {
+          if (!res || err) {
+            console.error('Error signing up user', err);
             reject(err);
           } else {
-            resolve(result.user);
+            const moveUserToGroupCmd = new AdminAddUserToGroupCommand({
+              UserPoolId: this.configSvc.getOrThrow('cognito.userPoolId'),
+              Username: email,
+              GroupName: 'supervisor',
+            });
+
+            const test = await this.providerClient.send(moveUserToGroupCmd);
+
+            console.log('<---------- test ---------->');
+            console.log(test);
+            console.log('<---------- /test ---------->');
+
+            resolve(res);
           }
         },
       );

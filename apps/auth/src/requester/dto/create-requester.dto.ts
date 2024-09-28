@@ -6,8 +6,10 @@ import {
   IsIn,
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   IsString,
   Length,
+  Matches,
 } from 'class-validator';
 
 export class CreateRequesterDto {
@@ -39,7 +41,15 @@ export class CreateRequesterDto {
 
   @IsString()
   @IsNotEmpty()
+  @Matches(
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$&+,:;=?@#|'<>.^*()%!-])[A-Za-z\d@$&+,:;=?@#|'<>.^*()%!-]{8,}$/,
+    { message: 'invalid password' },
+  )
   password: string;
+
+  @IsString()
+  @IsOptional()
+  sub: string;
 
   @IsString()
   @IsNotEmpty()
