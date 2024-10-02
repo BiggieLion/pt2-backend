@@ -39,9 +39,6 @@ export class StaffService {
 
   // Analyst
   async createAnalyst(createStaffDto: CreateStaffDto) {
-    console.log('<----- Into Create Analyst ----->');
-    console.log(createStaffDto);
-    console.log('<----- /Into Create Analyst ----->');
     await this.validateStaffExists(createStaffDto.email);
 
     const { email, password, firstname, lastname, rfc, curp } = createStaffDto;

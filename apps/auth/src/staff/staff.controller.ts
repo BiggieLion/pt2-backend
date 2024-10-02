@@ -18,7 +18,6 @@ export class StaffController {
   // Analyst
   @Post('analyst')
   createAnalyst(@Body() createStaffDto: CreateStaffDto) {
-    console.log('<----- Into Create Analyst Controller ----->');
     return this.staffSvc.createAnalyst(createStaffDto);
   }
 
