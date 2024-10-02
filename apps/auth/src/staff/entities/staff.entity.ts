@@ -3,20 +3,26 @@ import { Column, CreateDateColumn, Entity, UpdateDateColumn } from 'typeorm';
 
 @Entity('staff')
 export class Staff extends AbstractEntity<Staff> {
+  @Column({ nullable: false, type: 'varchar', unique: true })
+  curp: string;
+
+  @Column({ nullable: false, type: 'varchar', unique: true })
+  rfc: string;
+
   @Column({ nullable: false, type: 'varchar' })
   firstname: string;
 
   @Column({ nullable: false, type: 'varchar' })
   lastname: string;
 
-  @Column({ nullable: false, type: 'smallint' })
-  age: number;
-
   @Column({ nullable: false, type: 'varchar', unique: true })
   email: string;
 
   @Column({ nullable: false, type: 'varchar' })
   password: string;
+
+  @Column({ nullable: false, type: 'varchar' })
+  sub: string;
 
   @Column({ nullable: false, type: 'char' })
   gender: string;

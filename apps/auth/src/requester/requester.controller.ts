@@ -15,11 +15,6 @@ import { UpdateRequesterDto } from './dto/update-requester.dto';
 export class RequesterController {
   constructor(private readonly requesterSvc: RequesterService) {}
 
-  @Get('health')
-  health() {
-    return 'Healthy';
-  }
-
   @Post()
   create(@Body() createRequesterDTO: CreateRequesterDto) {
     return this.requesterSvc.create(createRequesterDTO);

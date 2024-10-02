@@ -15,28 +15,52 @@ import { UpdateStaffDto } from './dto/update-staff.dto';
 export class StaffController {
   constructor(private readonly staffSvc: StaffService) {}
 
-  @Get('health')
-  health() {
-    return 'Healthy';
+  // Analyst
+  @Post('analyst')
+  createAnalyst(@Body() createStaffDto: CreateStaffDto) {
+    console.log('<----- Into Create Analyst Controller ----->');
+    return this.staffSvc.createAnalyst(createStaffDto);
   }
 
-  @Post()
-  create(@Body() createStaffDTO: CreateStaffDto) {
-    return this.staffSvc.create(createStaffDTO);
+  @Get('analyst/:id')
+  findAnalyst(@Param('id') id: string) {
+    return this.staffSvc.findAnalyst(+id);
   }
 
-  @Get(':id')
-  findStaff(@Param('id') id: string) {
-    return this.staffSvc.findStaff(+id);
+  @Patch('analyst/:id')
+  updateAnalyst(
+    @Param('id') id: string,
+    @Body() updateStaffDto: UpdateStaffDto,
+  ) {
+    return this.staffSvc.updateAnalyst(+id, updateStaffDto);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateStaffDTO: UpdateStaffDto) {
-    return this.staffSvc.update(+id, updateStaffDTO);
+  @Delete('analyst/:id')
+  removeAnalyst(@Param('id') id: string) {
+    return this.staffSvc.removeAnalyst(+id);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.staffSvc.remove(+id);
+  //Supervisor
+  @Post('supervisor')
+  createSupervisor(@Body() createStaffDto: CreateStaffDto) {
+    return this.staffSvc.createSupervisor(createStaffDto);
+  }
+
+  @Get('supervisor/:id')
+  findSupervisor(@Param('id') id: string) {
+    return this.staffSvc.findSupervisor(+id);
+  }
+
+  @Patch('supervisor/:id')
+  updateSupervisor(
+    @Param('id') id: string,
+    @Body() updateStaffDto: UpdateStaffDto,
+  ) {
+    return this.staffSvc.updateSupervisor(+id, updateStaffDto);
+  }
+
+  @Delete('supervisor/:id')
+  removeSupervisor(@Param('id') id: string) {
+    return this.staffSvc.removeSupervisor(+id);
   }
 }

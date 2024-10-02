@@ -4,7 +4,6 @@ import { CreateRequesterDto } from './dto/create-requester.dto';
 import {
   CognitoUserAttribute,
   CognitoUserPool,
-  CognitoUserSession,
 } from 'amazon-cognito-identity-js';
 import {
   AdminAddUserToGroupCommand,
@@ -18,8 +17,8 @@ import { UpdateRequesterDto } from './dto/update-requester.dto';
 @Injectable()
 export class RequesterService {
   private readonly userPool: CognitoUserPool;
-  private readonly cognitoIdentitySvcProvider: CognitoUserSession;
   private readonly providerClient: CognitoIdentityProviderClient;
+
   constructor(
     private readonly requesterRepo: RequesterRepository,
     private readonly configSvc: ConfigService,
@@ -77,7 +76,7 @@ export class RequesterService {
             });
 
             await this.providerClient.send(moveUserToGroupCmd);
-            await resolve({ email, name: `${firstname} ${lastname}` });
+            resolve({ email, name: `${firstname} ${lastname}` });
           }
         },
       );
@@ -93,7 +92,7 @@ export class RequesterService {
   }
 
   async remove(id: number) {
-    const { sub } = await this.requesterRepo.findOne({ id });
+    const { sub, email } = await this.requesterRepo.findOne({ id });
     const deleteUserCmd = new AdminDeleteUserCommand({
       Username: sub,
       UserPoolId: this.configSvc.getOrThrow('cognito.userPoolId'),
@@ -101,7 +100,7 @@ export class RequesterService {
 
     await this.providerClient.send(deleteUserCmd);
     await this.requesterRepo.findOneAndDelete({ id });
-    return 'Deleted';
+    return `Requester with email ${email} has been deleted`;
   }
 
   // Private methods

@@ -20,7 +20,7 @@ export class ResponseInterceptor implements NestInterceptor {
         success: statusCode >= 400 ? false : true,
         timestamp: Date.now(),
         path: req.url,
-        message: statusCode >= 400 ? 'ERROR' : 'SUCCESS',
+        message: statusCode >= 400 ? 'CANCEL' : 'CONTINUE',
         data,
       })),
       catchError((err) => {

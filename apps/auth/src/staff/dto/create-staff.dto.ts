@@ -5,13 +5,23 @@ import {
   IsIn,
   IsInt,
   IsNotEmpty,
+  IsOptional,
   IsString,
+  Length,
   Matches,
-  Max,
-  Min,
 } from 'class-validator';
 
 export class CreateStaffDto {
+  @IsString()
+  @IsNotEmpty()
+  @Length(18, 18, { message: 'CURP must be 18 characters length' })
+  curp: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @Length(13, 13, { message: 'RFC must be 13 characters length' })
+  rfc: string;
+
   @IsString()
   @IsNotEmpty()
   firstname: string;
@@ -19,12 +29,6 @@ export class CreateStaffDto {
   @IsString()
   @IsNotEmpty()
   lastname: string;
-
-  @IsInt()
-  @IsNotEmpty()
-  @Min(18, { message: 'Age must be greater than or equal to 18' })
-  @Max(99)
-  age: number;
 
   @IsString()
   @IsNotEmpty()
@@ -45,6 +49,10 @@ export class CreateStaffDto {
   )
   password: string;
 
+  @IsString()
+  @IsOptional()
+  sub: string;
+
   @IsDate()
   @IsNotEmpty()
   @Type(() => Date)
@@ -56,7 +64,5 @@ export class CreateStaffDto {
 
   @IsInt()
   @IsNotEmpty()
-  @Min(1, { message: 'Role not valid' })
-  @Max(2, { message: 'Role not valid' })
   rol: number;
 }

@@ -4,8 +4,6 @@ import { AuthService } from './auth.service';
 import { ConfigurationModule, DatabaseModule, LoggerModule } from '@app/common';
 import { RequesterModule } from './requester/requester.module';
 import { StaffModule } from './staff/staff.module';
-import { CognitoService } from './cognito/cognito.service';
-import { CognitoController } from './cognito/cognito.controller';
 
 @Module({
   imports: [
@@ -15,7 +13,7 @@ import { CognitoController } from './cognito/cognito.controller';
     LoggerModule,
     ConfigurationModule,
   ],
-  controllers: [AuthController, CognitoController],
-  providers: [AuthService, CognitoService],
+  controllers: [AuthController],
+  providers: [AuthService],
 })
 export class AuthModule {}
