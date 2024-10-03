@@ -20,7 +20,8 @@ export class ResponseInterceptor implements NestInterceptor {
         success: statusCode >= 400 ? false : true,
         timestamp: Date.now(),
         path: req.url,
-        message: statusCode >= 400 ? 'CANCEL' : 'CONTINUE',
+        action: statusCode >= 400 ? 'CANCEL' : 'CONTINUE',
+        message: data?.message || 'Request successful',
         data,
       })),
       catchError((err) => {
@@ -30,6 +31,7 @@ export class ResponseInterceptor implements NestInterceptor {
           success: false,
           timestamp: Date.now(),
           path: req.url,
+          action: 'CANCEL',
           message: err?.message || 'Internal Server Error',
           data: {},
         };
