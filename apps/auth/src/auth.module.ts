@@ -4,6 +4,8 @@ import { AuthService } from './auth.service';
 import { ConfigurationModule, DatabaseModule, LoggerModule } from '@app/common';
 import { RequesterModule } from './requester/requester.module';
 import { StaffModule } from './staff/staff.module';
+import { PassportModule } from '@nestjs/passport';
+import { JwtStrategy } from './strategy/jwt.strategy';
 
 @Module({
   imports: [
@@ -12,8 +14,9 @@ import { StaffModule } from './staff/staff.module';
     StaffModule,
     LoggerModule,
     ConfigurationModule,
+    PassportModule.register({ defaultStrategy: 'jwt' }),
   ],
   controllers: [AuthController],
-  providers: [AuthService],
+  providers: [AuthService, JwtStrategy],
 })
 export class AuthModule {}

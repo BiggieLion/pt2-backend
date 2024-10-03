@@ -6,18 +6,22 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { RequestsService } from './requests.service';
 import { CreateRequestDto } from './dto/create-request.dto';
 import { UpdateRequestDto } from './dto/update-request.dto';
+import { CurrentUser, JwtAuthGuard, Roles } from '@app/common';
 
 @Controller('requests')
 export class RequestsController {
   constructor(private readonly requestsService: RequestsService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Get('health')
-  health() {
-    return 'Healthy';
+  @Roles('supervisor', 'requester')
+  health(@CurrentUser() user) {
+    return user;
   }
 
   @Post()

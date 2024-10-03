@@ -22,5 +22,18 @@ export const configuration = () => ({
     requesterGroup: process.env.COGNITO_REQUESTER_GROUP,
     analystGroup: process.env.COGNITO_ANALYST_GROUP,
     supervisorGroup: process.env.COGNITO_SUPERVISOR_GROUP,
+    authority: process.env.COGNITO_AUTHORITY,
+  },
+
+  microservices: {
+    auth: {
+      host: process.env.AUTH_HOST,
+      port: process.env.AUTH_PORT,
+    },
+  },
+
+  auth: {
+    httpPort: process.env.AUTH_HTTP_PORT,
+    tcpPort: process.env.AUTH_TCP_PORT,
   },
 });
