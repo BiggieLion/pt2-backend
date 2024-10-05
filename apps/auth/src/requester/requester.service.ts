@@ -1,4 +1,4 @@
-import { Injectable, UnprocessableEntityException } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { RequesterRepository } from './requester.repository';
 import { CreateRequesterDto } from './dto/create-requester.dto';
 import {
@@ -38,7 +38,9 @@ export class RequesterService {
   }
 
   async create(createRequesterDTO: CreateRequesterDto) {
-    await this.validateUserExists(createRequesterDTO.email);
+    await this.validateEmailExists(createRequesterDTO.email);
+    await this.validateCURPExists(createRequesterDTO.curp);
+    await this.validateRFCExists(createRequesterDTO.rfc);
 
     const { email, password, firstname, lastname, rfc, curp } =
       createRequesterDTO;
@@ -76,19 +78,29 @@ export class RequesterService {
             });
 
             await this.providerClient.send(moveUserToGroupCmd);
-            resolve({ email, name: `${firstname} ${lastname}` });
+            resolve({
+              data: { email, name: `${firstname} ${lastname}` },
+              message: 'Requester created successfully',
+            });
           }
         },
       );
     });
   }
 
-  findRequester(id: number) {
-    return this.requesterRepo.findOne({ id });
+  async findRequester(id: number) {
+    const requester = await this.requesterRepo.findOne({ id });
+    return {
+      data: requester,
+      message: 'Requester found successfully',
+    };
   }
 
-  update(id: number, updateRequesterDTO: UpdateRequesterDto) {
-    return this.requesterRepo.findOneAndUpdate({ id }, updateRequesterDTO);
+  async update(id: number, updateRequesterDTO: UpdateRequesterDto) {
+    await this.requesterRepo.findOneAndUpdate({ id }, updateRequesterDTO);
+    return {
+      message: 'Requester updated successfully',
+    };
   }
 
   async remove(id: number) {
@@ -100,17 +112,39 @@ export class RequesterService {
 
     await this.providerClient.send(deleteUserCmd);
     await this.requesterRepo.findOneAndDelete({ id });
-    return `Requester with email ${email} has been deleted`;
+    return {
+      message: `Requester with email ${email} has been deleted`,
+    };
   }
 
   // Private methods
-  private async validateUserExists(email: string) {
+  private async validateEmailExists(email: string) {
     try {
       await this.requesterRepo.findOne({ email });
     } catch (error) {
       return;
     }
 
-    throw new UnprocessableEntityException('Requester already exists');
+    throw new ConflictException('Requester email already registered');
+  }
+
+  private async validateCURPExists(curp: string) {
+    try {
+      await this.requesterRepo.findOne({ curp });
+    } catch (error) {
+      return;
+    }
+
+    throw new ConflictException('Requester CURP already registered');
+  }
+
+  private async validateRFCExists(rfc: string) {
+    try {
+      await this.requesterRepo.findOne({ rfc });
+    } catch (error) {
+      return;
+    }
+
+    throw new ConflictException('Requester RFC already registered');
   }
 }

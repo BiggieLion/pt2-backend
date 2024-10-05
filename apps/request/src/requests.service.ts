@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateRequestDto } from './dto/create-request.dto';
 import { UpdateRequestDto } from './dto/update-request.dto';
 import { RequestRepository } from './request.repository';
@@ -8,24 +8,55 @@ import { Request } from './entities/request.entity';
 export class RequestsService {
   constructor(private readonly requestRepository: RequestRepository) {}
 
-  create(createRequestDto: CreateRequestDto) {
+  async create(createRequestDto: CreateRequestDto) {
     const request = new Request({ ...createRequestDto });
-    return this.requestRepository.create(request);
+    return {
+      data: await this.requestRepository.create(request),
+      message: 'Request created successfully',
+    };
   }
 
-  findByAnalyst(id: number) {
-    return this.requestRepository.find({ analyst_id: id });
+  async findByAnalyst(id: number) {
+    const requests = await this.requestRepository.find({ analyst_id: id });
+    if (requests.length === 0) {
+      throw new NotFoundException('Requests not found');
+    }
+    return {
+      data: requests,
+      message: 'Requests found successfully',
+    };
   }
 
-  findBySupervisor(id: number) {
-    return this.requestRepository.find({ supervisor_id: id });
+  async findBySupervisor(id: number) {
+    const requests = await this.requestRepository.find({ supervisor_id: id });
+    if (requests.length === 0) {
+      throw new NotFoundException('Requests not found');
+    }
+    return {
+      data: requests,
+      message: 'Requests found successfully',
+    };
   }
 
-  update(id: number, updateRequestDto: UpdateRequestDto) {
-    return this.requestRepository.findOneAndUpdate({ id }, updateRequestDto);
+  async update(id: number, updateRequestDto: UpdateRequestDto) {
+    return {
+      data: await this.requestRepository.findOneAndUpdate(
+        { id },
+        updateRequestDto,
+      ),
+      message: 'Request updated successfully',
+    };
   }
 
-  remove(id: number) {
-    return this.requestRepository.findOneAndDelete({ id });
+  async remove(id: number) {
+    const deleted = await this.requestRepository.findOneAndDelete({ id });
+    console.log(deleted.affected);
+    if (deleted.affected === 0) {
+      throw new NotFoundException('Request not found');
+    }
+    return {
+      data: {},
+      message: 'Request deleted successfully',
+    };
   }
 }

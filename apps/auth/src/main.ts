@@ -2,9 +2,10 @@ import { NestFactory } from '@nestjs/core';
 import { AuthModule } from './auth.module';
 import { ValidationPipe } from '@nestjs/common';
 import { Logger } from 'nestjs-pino';
-import { ResponseInterceptor } from '@app/common/responses/response.interceptor';
+
 import { Transport } from '@nestjs/microservices';
 import { ConfigService } from '@nestjs/config';
+import { ResponseInterceptor } from '@app/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AuthModule);

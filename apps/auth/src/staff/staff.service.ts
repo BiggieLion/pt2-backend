@@ -3,7 +3,7 @@ import {
   AdminDeleteUserCommand,
   CognitoIdentityProviderClient,
 } from '@aws-sdk/client-cognito-identity-provider';
-import { Injectable, UnprocessableEntityException } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import {
   CognitoUserAttribute,
   CognitoUserPool,
@@ -39,7 +39,9 @@ export class StaffService {
 
   // Analyst
   async createAnalyst(createStaffDto: CreateStaffDto) {
-    await this.validateStaffExists(createStaffDto.email);
+    await this.validateEmailStaff(createStaffDto.email);
+    await this.validateCURPStaff(createStaffDto.curp);
+    await this.validateRFCStaff(createStaffDto.rfc);
 
     const { email, password, firstname, lastname, rfc, curp } = createStaffDto;
 
@@ -86,12 +88,19 @@ export class StaffService {
     });
   }
 
-  findAnalyst(id: number) {
-    return this.staffRepo.findOne({ id });
+  async findAnalyst(id: number) {
+    const analyst = await this.staffRepo.findOne({ id });
+    return {
+      data: analyst,
+      message: 'Analyst found successfully',
+    };
   }
 
-  updateAnalyst(id: number, updateStaffDto: UpdateStaffDto) {
-    return this.staffRepo.findOneAndUpdate({ id }, updateStaffDto);
+  async updateAnalyst(id: number, updateStaffDto: UpdateStaffDto) {
+    await this.staffRepo.findOneAndUpdate({ id }, updateStaffDto);
+    return {
+      message: 'Analyst updated successfully',
+    };
   }
 
   async removeAnalyst(id: number) {
@@ -105,12 +114,16 @@ export class StaffService {
     await this.providerClient.send(deleteAnalystCmd);
     await this.staffRepo.findOneAndDelete({ id });
 
-    return `Analyst with email ${email} has been deleted`;
+    return {
+      message: `Analyst with email ${email} has been deleted`,
+    };
   }
 
   // Supervisor
   async createSupervisor(createStaffDto: CreateStaffDto) {
-    await this.validateStaffExists(createStaffDto.email);
+    await this.validateEmailStaff(createStaffDto.email);
+    await this.validateCURPStaff(createStaffDto.curp);
+    await this.validateRFCStaff(createStaffDto.rfc);
 
     const { email, password, firstname, lastname, rfc, curp } = createStaffDto;
 
@@ -150,19 +163,29 @@ export class StaffService {
             });
             await this.providerClient.send(moveSupervisorToGroup);
 
-            resolve({ email, name: `${firstname} ${lastname}` });
+            resolve({
+              message: 'Staff created successfully',
+              data: { email, name: `${firstname} ${lastname}` },
+            });
           }
         },
       );
     });
   }
 
-  findSupervisor(id: number) {
-    return this.staffRepo.findOne({ id });
+  async findSupervisor(id: number) {
+    const supervisor = await this.staffRepo.findOne({ id });
+    return {
+      data: supervisor,
+      message: 'Supervisor found successfully',
+    };
   }
 
-  updateSupervisor(id: number, updateStaffDto: UpdateStaffDto) {
-    return this.staffRepo.findOneAndUpdate({ id }, updateStaffDto);
+  async updateSupervisor(id: number, updateStaffDto: UpdateStaffDto) {
+    await this.staffRepo.findOneAndUpdate({ id }, updateStaffDto);
+    return {
+      message: 'Supervisor updated successfully',
+    };
   }
 
   async removeSupervisor(id: number) {
@@ -176,17 +199,39 @@ export class StaffService {
     await this.providerClient.send(deleteSupervisorCmd);
     await this.staffRepo.findOneAndDelete({ id });
 
-    return `Supervisor with email ${email} has been deleted`;
+    return {
+      message: `Supervisor with email ${email} has been deleted`,
+    };
   }
 
   // Private function
-  private async validateStaffExists(email: string) {
+  private async validateEmailStaff(email: string) {
     try {
       await this.staffRepo.findOne({ email });
     } catch (error) {
       return;
     }
 
-    throw new UnprocessableEntityException('Staff user already exists');
+    throw new ConflictException('Staff email already registered');
+  }
+
+  private async validateCURPStaff(curp: string) {
+    try {
+      await this.staffRepo.findOne({ curp });
+    } catch (error) {
+      return;
+    }
+
+    throw new ConflictException('Staff CURP already registered');
+  }
+
+  private async validateRFCStaff(rfc: string) {
+    try {
+      await this.staffRepo.findOne({ rfc });
+    } catch (error) {
+      return;
+    }
+
+    throw new ConflictException('Staff RFC already registered');
   }
 }
