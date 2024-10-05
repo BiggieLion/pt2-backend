@@ -33,8 +33,8 @@ export class Staff extends AbstractEntity<Staff> {
   @Column({ nullable: false, type: 'varchar' })
   address: string;
 
-  @Column({ nullable: false, type: 'smallint' })
-  rol: number;
+  @Column({ nullable: false, type: 'varchar' })
+  rol: string;
 
   @Column({ nullable: false, type: 'boolean', default: false })
   is_eval_credit: boolean;

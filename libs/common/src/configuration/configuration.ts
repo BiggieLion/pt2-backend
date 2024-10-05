@@ -30,10 +30,40 @@ export const configuration = () => ({
       host: process.env.AUTH_HOST,
       port: process.env.AUTH_PORT,
     },
+
+    request: {
+      host: process.env.REQUEST_HOST,
+      port: process.env.REQUEST_PORT,
+    },
+
+    requester: {
+      host: process.env.REQUESTER_HOST,
+      port: process.env.REQUESTER_PORT,
+    },
+
+    staff: {
+      host: process.env.STAFF_HOST,
+      port: process.env.STAFF_PORT,
+    },
   },
 
   auth: {
     httpPort: process.env.AUTH_HTTP_PORT,
     tcpPort: process.env.AUTH_TCP_PORT,
+  },
+
+  request: {
+    httpPort: process.env.REQUEST_HTTP_PORT,
+    tcpPort: process.env.REQUEST_TCP_PORT,
+  },
+
+  requester: {
+    httpPort: process.env.REQUESTER_HTTP_PORT,
+    tcpPort: process.env.REQUESTER_TCP_PORT,
+  },
+
+  staff: {
+    httpPort: process.env.STAFF_HTTP_PORT,
+    tcpPort: process.env.STAFF_TCP_PORT,
   },
 });

@@ -7,17 +7,17 @@ import {
 } from 'class-validator';
 
 export class CreateRequestDto {
-  @IsNumber()
-  @IsNotEmpty()
-  requester_id: number;
+  @IsString()
+  @IsOptional()
+  requester_id: string;
 
-  @IsNumber()
-  @IsNotEmpty()
-  analyst_id: number;
+  @IsString()
+  @IsOptional()
+  analyst_id: string;
 
-  @IsNumber()
-  @IsNotEmpty()
-  supervisor_id: number;
+  @IsString()
+  @IsOptional()
+  supervisor_id: string;
 
   @IsNumber()
   @IsNotEmpty()

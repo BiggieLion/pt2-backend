@@ -16,8 +16,20 @@ export class RequestsService {
     };
   }
 
-  async findByAnalyst(id: number) {
-    const requests = await this.requestRepository.find({ analyst_id: id });
+  async findByRequester(sub: string) {
+    const requests = await this.requestRepository.find({ requester_id: sub });
+    if (requests.length === 0) {
+      throw new NotFoundException('Requests not found');
+    }
+
+    return {
+      data: requests,
+      message: 'Requests found successfully',
+    };
+  }
+
+  async findByAnalyst(sub: string) {
+    const requests = await this.requestRepository.find({ analyst_id: sub });
     if (requests.length === 0) {
       throw new NotFoundException('Requests not found');
     }
@@ -27,8 +39,8 @@ export class RequestsService {
     };
   }
 
-  async findBySupervisor(id: number) {
-    const requests = await this.requestRepository.find({ supervisor_id: id });
+  async findBySupervisor(sub: string) {
+    const requests = await this.requestRepository.find({ supervisor_id: sub });
     if (requests.length === 0) {
       throw new NotFoundException('Requests not found');
     }

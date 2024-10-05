@@ -17,33 +17,46 @@ import { CurrentUser, JwtAuthGuard, Roles } from '@app/common';
 export class RequestsController {
   constructor(private readonly requestsService: RequestsService) {}
 
+  // TODO: Create endpoint to get requester by ID, and get all the requesters
+
   @UseGuards(JwtAuthGuard)
-  @Get('health')
-  @Roles('supervisor', 'requester')
-  health(@CurrentUser() user) {
-    return user;
-  }
-
+  @Roles('requester')
   @Post()
-  create(@Body() createRequestDto: CreateRequestDto) {
-    return this.requestsService.create(createRequestDto);
+  create(@CurrentUser() userInfo, @Body() createRequestDTO: CreateRequestDto) {
+    createRequestDTO.requester_id = userInfo?.id;
+    return this.requestsService.create(createRequestDTO);
   }
 
-  @Get(':analyst_id')
-  findAllByAnalyst(@Param('analyst_id') id: number) {
-    return this.requestsService.findByAnalyst(id);
+  @UseGuards(JwtAuthGuard)
+  @Roles('requester')
+  @Get('/requester')
+  findAllByRequester(@CurrentUser() user) {
+    return this.requestsService.findByRequester(user?.id);
   }
 
-  @Get('/supervisor/:supervisor_id')
-  findAllBySupervisor(@Param('supervisor_id') id: number) {
-    return this.requestsService.findBySupervisor(id);
+  @UseGuards(JwtAuthGuard)
+  @Roles('analyst', 'supervisor')
+  @Get('/analyst')
+  findAllByAnalyst(@CurrentUser() user) {
+    return this.requestsService.findByAnalyst(user?.id);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Roles('supervisor')
+  @Get('/supervisor')
+  findAllBySupervisor(@CurrentUser() user) {
+    return this.requestsService.findBySupervisor(user?.id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Roles('requester', 'analyst', 'supervisor')
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateRequestDto: UpdateRequestDto) {
     return this.requestsService.update(+id, updateRequestDto);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Roles('supervisor')
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.requestsService.remove(+id);

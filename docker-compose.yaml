@@ -1,18 +1,6 @@
 version: "3"
 services:
-  request:
-    build:
-      context: .
-      dockerfile: ./apps/request/Dockerfile
-      target: development
-    command: npm run start:dev request
-    ports:
-      - '3000:3000'
-    depends_on:
-      - db
-    volumes:
-      - .:/usr/src/app
-
+  
   auth:
     build:
       context: .
@@ -20,11 +8,51 @@ services:
       target: development
     command: npm run start:dev auth
     ports:
-      - '3001:3001'
+      - '3000:3000'
     depends_on:
       - db
     volumes:
       - .:/usr/src/app
+  
+  request:
+    build:
+      context: .
+      dockerfile: ./apps/request/Dockerfile
+      target: development
+    command: npm run start:dev request
+    ports:
+      - '3002:3002'
+    depends_on:
+      - db
+    volumes:
+      - .:/usr/src/app
+
+  requester:
+    build:
+      context: .
+      dockerfile: ./apps/requester/Dockerfile
+      target: development
+    command: npm run start:dev requester
+    ports:
+      - '3004:3004'
+    depends_on:
+      - db
+    volumes:
+      - .:/usr/src/app
+
+  staff:
+    build:
+      context: .
+      dockerfile: ./apps/staff/Dockerfile
+      target: development
+    command: npm run start:dev staff
+    ports:
+      - '3006:3006'
+    depends_on:
+      - db
+    volumes:
+      - .:/usr/src/app
+
 
   db:
     container_name: risky_db

@@ -2,6 +2,8 @@ import { ConflictException, Injectable } from '@nestjs/common';
 import { RequesterRepository } from './requester.repository';
 import { CreateRequesterDto } from './dto/create-requester.dto';
 import {
+  AuthenticationDetails,
+  CognitoUser,
   CognitoUserAttribute,
   CognitoUserPool,
 } from 'amazon-cognito-identity-js';
@@ -13,6 +15,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { Requester } from './entities/requester.entity';
 import { UpdateRequesterDto } from './dto/update-requester.dto';
+import { ChangePasswordDto } from '@app/common';
 
 @Injectable()
 export class RequesterService {
@@ -73,7 +76,7 @@ export class RequesterService {
             await this.requesterRepo.create(requesterToSave);
             const moveUserToGroupCmd = new AdminAddUserToGroupCommand({
               UserPoolId: this.configSvc.getOrThrow('cognito.userPoolId'),
-              Username: email,
+              Username: createRequesterDTO.sub,
               GroupName: this.configSvc.getOrThrow('cognito.requesterGroup'),
             });
 
@@ -88,33 +91,76 @@ export class RequesterService {
     });
   }
 
-  async findRequester(id: number) {
-    const requester = await this.requesterRepo.findOne({ id });
+  async findRequester(sub: string) {
+    const requester = await this.requesterRepo.findOne({ sub });
     return {
       data: requester,
       message: 'Requester found successfully',
     };
   }
 
-  async update(id: number, updateRequesterDTO: UpdateRequesterDto) {
-    await this.requesterRepo.findOneAndUpdate({ id }, updateRequesterDTO);
+  async update(sub: string, updateRequesterDTO: UpdateRequesterDto) {
+    await this.requesterRepo.findOneAndUpdate({ sub }, updateRequesterDTO);
     return {
       message: 'Requester updated successfully',
     };
   }
 
-  async remove(id: number) {
-    const { sub, email } = await this.requesterRepo.findOne({ id });
+  async remove(sub: string) {
+    const { email } = await this.requesterRepo.findOne({ sub });
     const deleteUserCmd = new AdminDeleteUserCommand({
       Username: sub,
       UserPoolId: this.configSvc.getOrThrow('cognito.userPoolId'),
     });
 
     await this.providerClient.send(deleteUserCmd);
-    await this.requesterRepo.findOneAndDelete({ id });
+    await this.requesterRepo.findOneAndDelete({ sub });
     return {
       message: `Requester with email ${email} has been deleted`,
     };
+  }
+
+  async changePassword(sub: string, chancePasswordDTO: ChangePasswordDto) {
+    const { oldPassword, newPassword } = chancePasswordDTO;
+
+    const authenticationDetails = new AuthenticationDetails({
+      Username: sub,
+      Password: oldPassword,
+    });
+
+    const userCognito = new CognitoUser({
+      Username: sub,
+      Pool: this.userPool,
+    });
+
+    return new Promise((resolve, reject) => {
+      userCognito.authenticateUser(authenticationDetails, {
+        onSuccess: () => {
+          userCognito.changePassword(oldPassword, newPassword, (err, res) => {
+            if (err) {
+              console.error('Error changing password', err);
+              reject(err);
+              return;
+            }
+
+            this.requesterRepo.findOneAndUpdate(
+              { sub },
+              { password: newPassword },
+            );
+
+            resolve({
+              message: 'Password changed successfully',
+              data: res,
+            });
+          });
+        },
+
+        onFailure(err) {
+          console.error('Error authenticating user', err);
+          reject(err);
+        },
+      });
+    });
   }
 
   // Private methods

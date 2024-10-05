@@ -32,8 +32,10 @@ export class AuthService {
       userCognito.authenticateUser(authenticationDetails, {
         onSuccess: (tokens) => {
           resolve({
-            accessToken: tokens.getAccessToken().getJwtToken(),
-            refreshToken: tokens.getRefreshToken().getToken(),
+            data: {
+              accessToken: tokens.getAccessToken().getJwtToken(),
+              refreshToken: tokens.getRefreshToken().getToken(),
+            },
           });
         },
         onFailure(err) {

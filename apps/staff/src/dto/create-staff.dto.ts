@@ -3,7 +3,6 @@ import {
   IsDate,
   IsEmail,
   IsIn,
-  IsInt,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -62,7 +61,7 @@ export class CreateStaffDto {
   @IsNotEmpty()
   address: string;
 
-  @IsInt()
+  @IsString()
   @IsNotEmpty()
-  rol: number;
+  rol: string;
 }

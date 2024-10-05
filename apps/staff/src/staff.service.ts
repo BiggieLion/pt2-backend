@@ -5,6 +5,8 @@ import {
 } from '@aws-sdk/client-cognito-identity-provider';
 import { ConflictException, Injectable } from '@nestjs/common';
 import {
+  AuthenticationDetails,
+  CognitoUser,
   CognitoUserAttribute,
   CognitoUserPool,
 } from 'amazon-cognito-identity-js';
@@ -13,6 +15,7 @@ import { ConfigService } from '@nestjs/config';
 import { CreateStaffDto } from './dto/create-staff.dto';
 import { Staff } from './entities/staff.entity';
 import { UpdateStaffDto } from './dto/update-staff.dto';
+import { ChangePasswordDto } from '@app/common';
 
 @Injectable()
 export class StaffService {
@@ -81,30 +84,33 @@ export class StaffService {
             });
             await this.providerClient.send(moveAnalystToGroup);
 
-            resolve({ email, name: `${firstname} ${lastname}` });
+            resolve({
+              data: { email, name: `${firstname} ${lastname}` },
+              message: 'Analyst created successfully',
+            });
           }
         },
       );
     });
   }
 
-  async findAnalyst(id: number) {
-    const analyst = await this.staffRepo.findOne({ id });
+  async findAnalyst(sub: string) {
+    const analyst = await this.staffRepo.findOne({ sub });
     return {
       data: analyst,
       message: 'Analyst found successfully',
     };
   }
 
-  async updateAnalyst(id: number, updateStaffDto: UpdateStaffDto) {
-    await this.staffRepo.findOneAndUpdate({ id }, updateStaffDto);
+  async updateAnalyst(sub: string, updateStaffDto: UpdateStaffDto) {
+    await this.staffRepo.findOneAndUpdate({ sub }, updateStaffDto);
     return {
       message: 'Analyst updated successfully',
     };
   }
 
-  async removeAnalyst(id: number) {
-    const { sub, email } = await this.staffRepo.findOne({ id });
+  async removeAnalyst(sub: string) {
+    const { email } = await this.staffRepo.findOne({ sub });
 
     const deleteAnalystCmd = new AdminDeleteUserCommand({
       Username: sub,
@@ -112,7 +118,7 @@ export class StaffService {
     });
 
     await this.providerClient.send(deleteAnalystCmd);
-    await this.staffRepo.findOneAndDelete({ id });
+    await this.staffRepo.findOneAndDelete({ sub });
 
     return {
       message: `Analyst with email ${email} has been deleted`,
@@ -164,7 +170,7 @@ export class StaffService {
             await this.providerClient.send(moveSupervisorToGroup);
 
             resolve({
-              message: 'Staff created successfully',
+              message: 'Supervisor created successfully',
               data: { email, name: `${firstname} ${lastname}` },
             });
           }
@@ -173,23 +179,23 @@ export class StaffService {
     });
   }
 
-  async findSupervisor(id: number) {
-    const supervisor = await this.staffRepo.findOne({ id });
+  async findSupervisor(sub: string) {
+    const supervisor = await this.staffRepo.findOne({ sub });
     return {
       data: supervisor,
       message: 'Supervisor found successfully',
     };
   }
 
-  async updateSupervisor(id: number, updateStaffDto: UpdateStaffDto) {
-    await this.staffRepo.findOneAndUpdate({ id }, updateStaffDto);
+  async updateSupervisor(sub: string, updateStaffDto: UpdateStaffDto) {
+    await this.staffRepo.findOneAndUpdate({ sub }, updateStaffDto);
     return {
       message: 'Supervisor updated successfully',
     };
   }
 
-  async removeSupervisor(id: number) {
-    const { sub, email } = await this.staffRepo.findOne({ id });
+  async removeSupervisor(sub: string) {
+    const { email } = await this.staffRepo.findOne({ sub });
 
     const deleteSupervisorCmd = new AdminDeleteUserCommand({
       Username: sub,
@@ -197,11 +203,50 @@ export class StaffService {
     });
 
     await this.providerClient.send(deleteSupervisorCmd);
-    await this.staffRepo.findOneAndDelete({ id });
+    await this.staffRepo.findOneAndDelete({ sub });
 
     return {
       message: `Supervisor with email ${email} has been deleted`,
     };
+  }
+
+  async changePassword(sub: string, changePasswordDTO: ChangePasswordDto) {
+    const { oldPassword, newPassword } = changePasswordDTO;
+
+    const auhtenticationDetails = new AuthenticationDetails({
+      Username: sub,
+      Password: oldPassword,
+    });
+
+    const userCognito = new CognitoUser({
+      Username: sub,
+      Pool: this.userPool,
+    });
+
+    return new Promise((resolve, reject) => {
+      userCognito.authenticateUser(auhtenticationDetails, {
+        onSuccess: () => {
+          userCognito.changePassword(oldPassword, newPassword, (err, res) => {
+            if (err) {
+              console.error('Error changing password', err);
+              reject(err);
+              return;
+            }
+
+            this.staffRepo.findOneAndUpdate({ sub }, { password: newPassword });
+
+            resolve({
+              message: 'Password changed successfully',
+              data: res,
+            });
+          });
+        },
+        onFailure(err) {
+          console.error('Error authenticating user', err);
+          reject(err);
+        },
+      });
+    });
   }
 
   // Private function

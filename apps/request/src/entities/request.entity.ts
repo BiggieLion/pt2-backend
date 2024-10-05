@@ -3,14 +3,14 @@ import { Column, CreateDateColumn, Entity, UpdateDateColumn } from 'typeorm';
 
 @Entity('request')
 export class Request extends AbstractEntity<Request> {
-  @Column({ nullable: false, type: 'int' })
-  requester_id: number;
+  @Column({ nullable: false, type: 'varchar' })
+  requester_id: string;
 
-  @Column({ nullable: false, type: 'int' })
-  analyst_id: number;
+  @Column({ nullable: true, type: 'varchar' })
+  analyst_id: string;
 
-  @Column({ nullable: false, type: 'int' })
-  supervisor_id: number;
+  @Column({ nullable: true, type: 'varchar' })
+  supervisor_id: string;
 
   @Column({ nullable: false, type: 'smallint' })
   credit_id: number;

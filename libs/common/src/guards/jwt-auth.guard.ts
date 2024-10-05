@@ -27,7 +27,7 @@ export class JwtAuthGuard implements CanActivate {
     const jwt = context
       .switchToHttp()
       .getRequest()
-      .headers.authorization?.replace('Bearer ', '');
+      ?.headers?.authorization?.replace('Bearer ', '');
 
     if (!jwt) {
       return false;
@@ -40,7 +40,6 @@ export class JwtAuthGuard implements CanActivate {
       .pipe(
         tap((res) => {
           if (roles) {
-            console.log(roles);
             if (!roles.includes(res.rol)) {
               this.logger.error('The user does not have the necessary rol');
               throw new UnauthorizedException('Unauthorized');
