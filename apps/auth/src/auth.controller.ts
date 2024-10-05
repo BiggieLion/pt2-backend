@@ -15,12 +15,6 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @UseGuards(JwtAuthGuard)
-  @Get('health')
-  health(@Request() req) {
-    return req?.user;
-  }
-
   @Post('login')
   login(@Body() loginUserDto: LoginUserDto) {
     return this.authService.authenticateUser(loginUserDto);
