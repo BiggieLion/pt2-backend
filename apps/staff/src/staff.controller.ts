@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Param,
   Patch,
   Post,
   UseGuards,
@@ -26,24 +27,44 @@ export class StaffController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Roles('analyst', 'supervisor')
+  @Roles('analyst')
   @Get('analyst')
-  findAnalyst(@CurrentUser() user) {
+  findCurrentAnalyst(@CurrentUser() user) {
     return this.staffSvc.findAnalyst(user?.id);
   }
 
   @UseGuards(JwtAuthGuard)
-  @Roles('analyst', 'supervisor')
+  @Roles('supervisor')
+  @Get('analyst/:sub')
+  findAnalyst(@Param('sub') sub: string) {
+    return this.staffSvc.findAnalyst(sub);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Roles('analyst')
   @Patch('analyst')
-  updateAnalyst(@CurrentUser() user, @Body() updateStaffDto: UpdateStaffDto) {
+  updateCurrentAnalyst(
+    @CurrentUser() user,
+    @Body() updateStaffDto: UpdateStaffDto,
+  ) {
     return this.staffSvc.updateAnalyst(user?.id, updateStaffDto);
   }
 
   @UseGuards(JwtAuthGuard)
   @Roles('supervisor')
-  @Delete('analyst')
-  removeAnalyst(@CurrentUser() user) {
-    return this.staffSvc.removeAnalyst(user?.id);
+  @Patch('analyst/:sub')
+  updateAnalyst(
+    @Param('sub') sub: string,
+    @Body() updateStaffDto: UpdateStaffDto,
+  ) {
+    return this.staffSvc.updateAnalyst(sub, updateStaffDto);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Roles('supervisor')
+  @Delete('analyst/:sub')
+  removeAnalyst(@Param('sub') sub: string) {
+    return this.staffSvc.removeAnalyst(sub);
   }
 
   //Supervisor
@@ -57,14 +78,21 @@ export class StaffController {
   @UseGuards(JwtAuthGuard)
   @Roles('supervisor')
   @Get('supervisor')
-  findSupervisor(@CurrentUser() user) {
+  findCurrentSupervisor(@CurrentUser() user) {
     return this.staffSvc.findSupervisor(user?.id);
   }
 
   @UseGuards(JwtAuthGuard)
   @Roles('supervisor')
+  @Get('supervisor/:sub')
+  findSupervisor(@Param('sub') sub: string) {
+    return this.staffSvc.findSupervisor(sub);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Roles('supervisor')
   @Patch('supervisor')
-  updateSupervisor(
+  updateCurrentSupervisor(
     @CurrentUser() user,
     @Body() updateStaffDto: UpdateStaffDto,
   ) {
@@ -73,9 +101,9 @@ export class StaffController {
 
   @UseGuards(JwtAuthGuard)
   @Roles('supervisor')
-  @Delete('supervisor')
-  removeSupervisor(@CurrentUser() user) {
-    return this.staffSvc.removeSupervisor(user?.id);
+  @Delete('supervisor/:sub')
+  removeSupervisor(@Param('sub') sub: string) {
+    return this.staffSvc.removeSupervisor(sub);
   }
 
   @UseGuards(JwtAuthGuard)

@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Param,
   Patch,
   Post,
   UseGuards,
@@ -23,24 +24,51 @@ export class RequesterController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Roles('requester', 'analyst', 'supervisor')
+  @Roles('requester')
   @Get()
-  findRequester(@CurrentUser() user) {
+  findCurrentRequester(@CurrentUser() user) {
     return this.requesterSvc.findRequester(user?.id);
   }
 
   @UseGuards(JwtAuthGuard)
-  @Roles('requester', 'analyst', 'supervisor')
+  @Roles('analyst', 'supervisor')
+  @Get('/:sub')
+  findRequester(@Param('sub') sub: string) {
+    return this.requesterSvc.findRequester(sub);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Roles('requester')
   @Patch()
-  update(@CurrentUser() user, @Body() updateRequesterDTO: UpdateRequesterDto) {
+  updateCurrent(
+    @CurrentUser() user,
+    @Body() updateRequesterDTO: UpdateRequesterDto,
+  ) {
     return this.requesterSvc.update(user?.id, updateRequesterDTO);
   }
 
   @UseGuards(JwtAuthGuard)
-  @Roles('requester', 'analyst', 'supervisor')
+  @Roles('analyst', 'supervisor')
+  @Patch('/:sub')
+  update(
+    @Param('sub') sub: string,
+    @Body() updateRequesterDTO: UpdateRequesterDto,
+  ) {
+    return this.requesterSvc.update(sub, updateRequesterDTO);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Roles('requester')
   @Delete()
-  remove(@CurrentUser() user) {
+  removeCurrent(@CurrentUser() user) {
     return this.requesterSvc.remove(user?.id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Roles('supervisor')
+  @Delete('/:sub')
+  remove(@Param('sub') sub: string) {
+    return this.requesterSvc.remove(sub);
   }
 
   @UseGuards(JwtAuthGuard)

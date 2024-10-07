@@ -30,22 +30,43 @@ export class RequestsController {
   @UseGuards(JwtAuthGuard)
   @Roles('requester')
   @Get('/requester')
-  findAllByRequester(@CurrentUser() user) {
+  findAllByCurrentRequester(@CurrentUser() user) {
     return this.requestsService.findByRequester(user?.id);
   }
 
   @UseGuards(JwtAuthGuard)
   @Roles('analyst', 'supervisor')
+  @Get('/requester/:sub')
+  findAllByRequester(@Param('sub') sub: string) {
+    return this.requestsService.findByRequester(sub);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Roles('analyst')
   @Get('/analyst')
-  findAllByAnalyst(@CurrentUser() user) {
+  findAllByCurrentAnalyst(@CurrentUser() user) {
     return this.requestsService.findByAnalyst(user?.id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Roles('analyst', 'supervisor')
+  @Get('/analyst/:sub')
+  findAllByAnalyst(@Param('sub') sub: string) {
+    return this.requestsService.findByAnalyst(sub);
   }
 
   @UseGuards(JwtAuthGuard)
   @Roles('supervisor')
   @Get('/supervisor')
-  findAllBySupervisor(@CurrentUser() user) {
+  findAllByCurrentSupervisor(@CurrentUser() user) {
     return this.requestsService.findBySupervisor(user?.id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Roles('supervisor')
+  @Get('/supervisor/:sub')
+  findAllBySupervisor(@Param('sub') sub: string) {
+    return this.requestsService.findBySupervisor(sub);
   }
 
   @UseGuards(JwtAuthGuard)
