@@ -18,6 +18,7 @@ export const validationSchema = Joi.object({
   COGNITO_ANALYST_GROUP: Joi.string().required(),
   COGNITO_SUPERVISOR_GROUP: Joi.string().required(),
   COGNITO_AUTHORITY: Joi.string().required(),
+  RESEND_API_KEY: Joi.string().required(),
   AUTH_HOST: Joi.string().required(),
   AUTH_PORT: Joi.number().required(),
   REQUEST_HOST: Joi.string().required(),

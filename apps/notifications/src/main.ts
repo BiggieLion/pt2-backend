@@ -20,6 +20,7 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
   app.useGlobalInterceptors(new ResponseInterceptor());
   app.useLogger(app.get(Logger));
+
   await app.startAllMicroservices();
   await app.listen(configSvc.getOrThrow('notifications.httpPort'));
 }

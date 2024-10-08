@@ -24,7 +24,7 @@ export class RequestsController {
   @Post()
   create(@CurrentUser() userInfo, @Body() createRequestDTO: CreateRequestDto) {
     createRequestDTO.requester_id = userInfo?.id;
-    return this.requestsService.create(createRequestDTO);
+    return this.requestsService.create(createRequestDTO, userInfo?.email);
   }
 
   @UseGuards(JwtAuthGuard)

@@ -1,15 +1,24 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateRequestDto } from './dto/create-request.dto';
 import { UpdateRequestDto } from './dto/update-request.dto';
 import { RequestRepository } from './request.repository';
 import { Request } from './entities/request.entity';
+import { NOTIFICATIONS_SERVICE } from '@app/common';
+import { ClientProxy } from '@nestjs/microservices';
 
 @Injectable()
 export class RequestsService {
-  constructor(private readonly requestRepository: RequestRepository) {}
+  constructor(
+    private readonly requestRepository: RequestRepository,
+    @Inject(NOTIFICATIONS_SERVICE)
+    private readonly notificationSvc: ClientProxy,
+  ) {}
 
-  async create(createRequestDto: CreateRequestDto) {
+  async create(createRequestDto: CreateRequestDto, email: string) {
     const request = new Request({ ...createRequestDto });
+    console.log('<----- before emit ----->');
+    this.notificationSvc.emit('notify-email', { email });
+    console.log('<----- after emit ----->');
     return {
       data: await this.requestRepository.create(request),
       message: 'Request created successfully',
@@ -62,7 +71,6 @@ export class RequestsService {
 
   async remove(id: number) {
     const deleted = await this.requestRepository.findOneAndDelete({ id });
-    console.log(deleted.affected);
     if (deleted.affected === 0) {
       throw new NotFoundException('Request not found');
     }

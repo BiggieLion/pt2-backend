@@ -34,7 +34,7 @@ export class AuthService {
         onSuccess: (tokens) => {
           resolve({
             data: {
-              accessToken: tokens.getAccessToken().getJwtToken(),
+              accessToken: tokens.getIdToken().getJwtToken(),
               refreshToken: tokens.getRefreshToken().getToken(),
             },
           });

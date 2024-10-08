@@ -83,7 +83,7 @@ export class RequesterService {
             await this.providerClient.send(moveUserToGroupCmd);
             resolve({
               data: { email, name: `${firstname} ${lastname}` },
-              message: 'Requester created successfully',
+              message: 'It is necessary to confirm the email',
             });
           }
         },

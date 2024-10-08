@@ -25,6 +25,10 @@ export const configuration = () => ({
     authority: process.env.COGNITO_AUTHORITY,
   },
 
+  resend: {
+    apiKey: process.env.RESEND_API_KEY,
+  },
+
   microservices: {
     auth: {
       host: process.env.AUTH_HOST,

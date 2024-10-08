@@ -5,7 +5,10 @@ import { DatabaseModule, LoggerModule } from '@app/common';
 import { Request } from './entities/request.entity';
 import { RequestRepository } from './request.repository';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import { AUTH_SERVICE } from '@app/common/constants/services.constants';
+import {
+  AUTH_SERVICE,
+  NOTIFICATIONS_SERVICE,
+} from '@app/common/constants/services.constants';
 import { ConfigService } from '@nestjs/config';
 
 @Module({
@@ -21,6 +24,17 @@ import { ConfigService } from '@nestjs/config';
           options: {
             host: configSvc.getOrThrow('microservices.auth.host'),
             port: configSvc.getOrThrow('microservices.auth.port'),
+          },
+        }),
+        inject: [ConfigService],
+      },
+      {
+        name: NOTIFICATIONS_SERVICE,
+        useFactory: (configSvc: ConfigService) => ({
+          transport: Transport.TCP,
+          options: {
+            host: configSvc.getOrThrow('microservices.notifications.host'),
+            port: configSvc.getOrThrow('microservices.notifications.port'),
           },
         }),
         inject: [ConfigService],
