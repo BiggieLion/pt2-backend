@@ -6,6 +6,7 @@ import {
   CognitoUserPool,
 } from 'amazon-cognito-identity-js';
 import { LoginUserDto } from './dto/login-user.dto';
+import { ForgotPasswordDto } from '@app/common';
 
 @Injectable()
 export class AuthService {
@@ -36,6 +37,51 @@ export class AuthService {
               accessToken: tokens.getAccessToken().getJwtToken(),
               refreshToken: tokens.getRefreshToken().getToken(),
             },
+          });
+        },
+        onFailure(err) {
+          reject(err);
+        },
+      });
+    });
+  }
+
+  async forgotPassword(forgotPasswordDto: ForgotPasswordDto) {
+    const { email } = forgotPasswordDto;
+
+    const userCogito = new CognitoUser({
+      Username: email,
+      Pool: this.userPool,
+    });
+
+    return new Promise((resolve, reject) => {
+      userCogito.forgotPassword({
+        onSuccess(data) {
+          resolve({
+            message: 'Password reset requested',
+            data,
+          });
+        },
+        onFailure(err) {
+          reject(err);
+        },
+      });
+    });
+  }
+
+  async confirmUserPassword(forgotPasswordDto: ForgotPasswordDto) {
+    const { email, confirmationCode, newPassword } = forgotPasswordDto;
+
+    const userCogito = new CognitoUser({
+      Username: email,
+      Pool: this.userPool,
+    });
+
+    return new Promise((resolve, reject) => {
+      userCogito.confirmPassword(confirmationCode, newPassword, {
+        onSuccess() {
+          resolve({
+            message: 'Password reset successfully',
           });
         },
         onFailure(err) {
