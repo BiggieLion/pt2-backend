@@ -53,6 +53,19 @@ services:
     volumes:
       - .:/usr/src/app
 
+  notifications:
+    build:
+      context: .
+      dockerfile: ./apps/notifications/Dockerfile
+      target: development
+    command: npm run start:dev notifications
+    ports:
+      - '3008:3008'
+    depends_on:
+      - db
+    volumes:
+      - .:/usr/src/app
+
 
   db:
     container_name: risky_db

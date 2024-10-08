@@ -24,6 +24,8 @@ export const validationSchema = Joi.object({
   REQUEST_PORT: Joi.number().required(),
   REQUESTER_HOST: Joi.string().required(),
   REQUESTER_PORT: Joi.number().required(),
+  NOTIFICATIONS_HOST: Joi.string().required(),
+  NOTIFICATIONS_PORT: Joi.number().required(),
   STAFF_HOST: Joi.string().required(),
   STAFF_PORT: Joi.number().required(),
   AUTH_HTTP_PORT: Joi.number().required(),
@@ -34,4 +36,6 @@ export const validationSchema = Joi.object({
   REQUESTER_TCP_PORT: Joi.number().required(),
   STAFF_HTTP_PORT: Joi.number().required(),
   STAFF_TCP_PORT: Joi.number().required(),
+  NOTIFICATIONS_HTTP_PORT: Joi.number().required(),
+  NOTIFICATIONS_TCP_PORT: Joi.number().required(),
 });

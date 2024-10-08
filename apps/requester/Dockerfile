@@ -28,4 +28,4 @@ RUN npm install --omit=dev
 
 COPY --from=development /usr/src/app/dist ./dist
 
-CMD [ "node", "dist/apps/request/main" ]
+CMD [ "node", "dist/apps/requester/main" ]

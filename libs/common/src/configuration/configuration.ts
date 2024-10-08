@@ -45,6 +45,11 @@ export const configuration = () => ({
       host: process.env.STAFF_HOST,
       port: process.env.STAFF_PORT,
     },
+
+    notifications: {
+      host: process.env.NOTIFICATIONS_HOST,
+      port: process.env.NOTIFICATIONS_PORT,
+    },
   },
 
   auth: {
@@ -65,5 +70,10 @@ export const configuration = () => ({
   staff: {
     httpPort: process.env.STAFF_HTTP_PORT,
     tcpPort: process.env.STAFF_TCP_PORT,
+  },
+
+  notifications: {
+    httpPort: process.env.NOTIFICATIONS_HTTP_PORT,
+    tcpPort: process.env.NOTIFICATIONS_TCP_PORT,
   },
 });
