@@ -1,29 +1,36 @@
-import * as nodemailer from 'nodemailer';
 import { Injectable } from '@nestjs/common';
-import { NotifyEmailDto } from './dto/notify-email.dto';
+import { NotifyEmailDto, Params } from './dto/notify-email.dto';
 import { ConfigService } from '@nestjs/config';
+import { InjectResend } from 'nest-resend';
+import { Resend } from 'resend';
+import * as templates from './templates';
+import { Templates } from './dto/templates.enum';
 
 @Injectable()
 export class NotificationsService {
-  constructor(private readonly configSvc: ConfigService) {}
-
-  private readonly transporter = nodemailer.createTransport({
-    host: 'smtp.resend.com',
-    port: 465,
-    secure: true,
-    auth: {
-      user: 'resend',
-      pass: this.configSvc.getOrThrow('resend.apiKey'),
-    },
-  });
+  constructor(
+    private readonly configSvc: ConfigService,
+    @InjectResend() private readonly resendClient: Resend,
+  ) {}
 
   async notifyEmail(data: NotifyEmailDto) {
-    console.log('<---- data ----->', data);
-    await this.transporter.sendMail({
-      from: 'PT2 Backend <no-reply@pt2.fun>',
-      to: 'hleonr1300@gmail.com',
-      subject: 'Test email from PT2 Backend',
-      html: '<h1>This is a mail test</h1> <h3>This mail is from a Degree Project</h3>',
+    let html = '';
+
+    if (Object.values(Templates).includes(data.template as Templates)) {
+      html = this.getHtmlTemplate('defaultTemplate', data?.params);
+    } else {
+      html = this.getHtmlTemplate(data.template, data.params);
+    }
+
+    return this.resendClient.emails.send({
+      from: this.configSvc.get('resend.smtp.email'),
+      to: data?.email,
+      subject: data?.subject,
+      html,
     });
+  }
+
+  private getHtmlTemplate(template: string, params: Params) {
+    return templates[Templates[template]](params);
   }
 }

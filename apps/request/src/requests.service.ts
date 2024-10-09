@@ -14,13 +14,21 @@ export class RequestsService {
     private readonly notificationSvc: ClientProxy,
   ) {}
 
-  async create(createRequestDto: CreateRequestDto, email: string) {
+  async create(
+    createRequestDto: CreateRequestDto,
+    email: string,
+    name: string,
+  ) {
     const request = new Request({ ...createRequestDto });
-    console.log('<----- before emit ----->');
-    this.notificationSvc.emit('notify-email', { email });
-    console.log('<----- after emit ----->');
+    const requestSaved = await this.requestRepository.create(request);
+    this.notificationSvc.emit('notify-email', {
+      email,
+      template: 'REQUEST_CREATED',
+      subject: 'Solicitud creada',
+      params: { name, creditId: requestSaved.id },
+    });
     return {
-      data: await this.requestRepository.create(request),
+      data: requestSaved,
       message: 'Request created successfully',
     };
   }

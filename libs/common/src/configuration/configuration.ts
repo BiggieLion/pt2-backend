@@ -26,7 +26,15 @@ export const configuration = () => ({
   },
 
   resend: {
-    apiKey: process.env.RESEND_API_KEY,
+    auth: {
+      user: process.env.RESEND_AUTH_USER,
+      password: process.env.RESEND_AUTH_PASSWORD,
+    },
+    smtp: {
+      host: process.env.RESEND_SMTP_HOST,
+      port: process.env.RESEND_SMTP_PORT,
+      email: process.env.RESEND_SMTP_EMAIL,
+    },
   },
 
   microservices: {
