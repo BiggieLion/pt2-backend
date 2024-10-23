@@ -14,17 +14,17 @@ export class DocumentsService {
     },
   });
 
-  async uploadFile(fileBuffer: Buffer, userId: string) {
+  async uploadFile(fileBuffer: Buffer, userId: string, fileType: string) {
     await this.s3Client.send(
       new PutObjectCommand({
         Bucket: this.configSvc.getOrThrow('s3.bucket'),
-        Key: `${userId}-ine.pdf`,
+        Key: `${userId}-${fileType}.pdf`,
         Body: fileBuffer,
       }),
     );
 
     return {
-      message: 'INE uploaded successfully',
+      message: `${fileType.toUpperCase()} uploaded successfully`,
     };
   }
 }

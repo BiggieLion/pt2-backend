@@ -18,20 +18,81 @@ export class DocumentsController {
 
   @UseGuards(JwtAuthGuard)
   @Roles('requester')
-  @Post()
   @UseInterceptors(FileInterceptor('file'))
-  async uploadFile(
+  @Post('ine')
+  async uploadIne(
     @UploadedFile(
       new ParseFilePipe({
         validators: [
-          new MaxFileSizeValidator({ maxSize: 5000000 }),
+          new MaxFileSizeValidator({ maxSize: 1500000 }),
           new FileTypeValidator({ fileType: 'application/pdf' }),
         ],
       }),
     )
-    file: Express.Multer.File,
+    ine: Express.Multer.File,
     @CurrentUser() user,
   ) {
-    return await this.documentsSvc.uploadFile(file.buffer, user?.id);
+    return await this.documentsSvc.uploadFile(ine.buffer, user?.id, 'ine');
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Roles('requester')
+  @UseInterceptors(FileInterceptor('file'))
+  @Post('birth')
+  async uploadBirthCertificate(
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({ maxSize: 1500000 }),
+          new FileTypeValidator({ fileType: 'application/pdf' }),
+        ],
+      }),
+    )
+    birth: Express.Multer.File,
+    @CurrentUser() user,
+  ) {
+    return await this.documentsSvc.uploadFile(birth.buffer, user?.id, 'birth');
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Roles('requester')
+  @UseInterceptors(FileInterceptor('file'))
+  @Post('domicile')
+  async uploadDomicileVoucher(
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({ maxSize: 1500000 }),
+          new FileTypeValidator({ fileType: 'application/pdf' }),
+        ],
+      }),
+    )
+    domicile: Express.Multer.File,
+    @CurrentUser() user,
+  ) {
+    return await this.documentsSvc.uploadFile(
+      domicile.buffer,
+      user?.id,
+      'domicile',
+    );
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Roles('requester')
+  @UseInterceptors(FileInterceptor('file'))
+  @Post('tax')
+  async uploadTaxCertificate(
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({ maxSize: 1500000 }),
+          new FileTypeValidator({ fileType: 'application/pdf' }),
+        ],
+      }),
+    )
+    tax: Express.Multer.File,
+    @CurrentUser() user,
+  ) {
+    return await this.documentsSvc.uploadFile(tax.buffer, user?.id, 'tax');
   }
 }
