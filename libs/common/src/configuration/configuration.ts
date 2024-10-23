@@ -25,6 +25,15 @@ export const configuration = () => ({
     authority: process.env.COGNITO_AUTHORITY,
   },
 
+  s3: {
+    bucket: process.env.S3_BUCKET,
+  },
+
+  throttler: {
+    ttl: process.env.UPLOAD_RATE_TTL,
+    limit: process.env.UPLOAD_RATE_LIMIT,
+  },
+
   resend: {
     auth: {
       user: process.env.RESEND_AUTH_USER,

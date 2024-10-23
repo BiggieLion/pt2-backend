@@ -66,6 +66,19 @@ services:
     volumes:
       - .:/usr/src/app
 
+  documents:
+    build:
+      context: .
+      dockerfile: ./apps/documents/Dockerfile
+      target: development
+    command: npm run start:dev documents
+    ports:
+      - '3010:3010'
+    depends_on:
+      - db
+    volumes:
+      - .:/usr/src/app
+
 
   db:
     container_name: risky_db
