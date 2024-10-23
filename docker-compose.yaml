@@ -1,0 +1,89 @@
+version: "3"
+services:
+  
+  auth:
+    build:
+      context: .
+      dockerfile: ./apps/auth/Dockerfile
+      target: development
+    command: npm run start:dev auth
+    ports:
+      - '3000:3000'
+    depends_on:
+      - db
+    volumes:
+      - .:/usr/src/app
+  
+  request:
+    build:
+      context: .
+      dockerfile: ./apps/request/Dockerfile
+      target: development
+    command: npm run start:dev request
+    ports:
+      - '3002:3002'
+    depends_on:
+      - db
+    volumes:
+      - .:/usr/src/app
+
+  requester:
+    build:
+      context: .
+      dockerfile: ./apps/requester/Dockerfile
+      target: development
+    command: npm run start:dev requester
+    ports:
+      - '3004:3004'
+    depends_on:
+      - db
+    volumes:
+      - .:/usr/src/app
+
+  staff:
+    build:
+      context: .
+      dockerfile: ./apps/staff/Dockerfile
+      target: development
+    command: npm run start:dev staff
+    ports:
+      - '3006:3006'
+    depends_on:
+      - db
+    volumes:
+      - .:/usr/src/app
+
+  notifications:
+    build:
+      context: .
+      dockerfile: ./apps/notifications/Dockerfile
+      target: development
+    command: npm run start:dev notifications
+    ports:
+      - '3008:3008'
+    depends_on:
+      - db
+    volumes:
+      - .:/usr/src/app
+
+  documents:
+    build:
+      context: .
+      dockerfile: ./apps/documents/Dockerfile
+      target: development
+    command: npm run start:dev documents
+    ports:
+      - '3010:3010'
+    depends_on:
+      - db
+    volumes:
+      - .:/usr/src/app
+
+
+  db:
+    container_name: risky_db
+    image: postgres:15.7
+    env_file:
+      - docker.env
+    ports:
+      - '54320:5432'

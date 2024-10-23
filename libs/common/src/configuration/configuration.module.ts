@@ -6,6 +6,7 @@ import { configuration } from './configuration';
 @Module({
   imports: [
     ConfigModule.forRoot({
+      isGlobal: true,
       envFilePath: `${process.cwd()}/.env.${process.env.NODE_ENV}`,
       load: [configuration],
       validationSchema,
