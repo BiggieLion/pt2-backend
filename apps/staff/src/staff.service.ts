@@ -16,6 +16,7 @@ import { CreateStaffDto } from './dto/create-staff.dto';
 import { Staff } from './entities/staff.entity';
 import { UpdateStaffDto } from './dto/update-staff.dto';
 import { ChangePasswordDto } from '@app/common';
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class StaffService {
@@ -73,6 +74,11 @@ export class StaffService {
             reject(err);
           } else {
             createStaffDto.sub = res.userSub;
+            createStaffDto.rol = 'analyst';
+            createStaffDto.password = await bcrypt.hash(
+              createStaffDto.password,
+              10,
+            );
 
             const analyst = new Staff({ ...createStaffDto });
             await this.staffRepo.create(analyst);
@@ -158,6 +164,11 @@ export class StaffService {
             reject(err);
           } else {
             createStaffDto.sub = res.userSub;
+            createStaffDto.rol = 'supervisor';
+            createStaffDto.password = await bcrypt.hash(
+              createStaffDto.password,
+              10,
+            );
 
             const supervisor = new Staff({ ...createStaffDto });
             await this.staffRepo.create(supervisor);
@@ -226,20 +237,26 @@ export class StaffService {
     return new Promise((resolve, reject) => {
       userCognito.authenticateUser(auhtenticationDetails, {
         onSuccess: () => {
-          userCognito.changePassword(oldPassword, newPassword, (err, res) => {
-            if (err) {
-              console.error('Error changing password', err);
-              reject(err);
-              return;
-            }
+          userCognito.changePassword(
+            oldPassword,
+            newPassword,
+            async (err, res) => {
+              if (err) {
+                console.error('Error changing password', err);
+                reject(err);
+                return;
+              }
 
-            this.staffRepo.findOneAndUpdate({ sub }, { password: newPassword });
+              const hashPass = await bcrypt.hash(newPassword, 10);
 
-            resolve({
-              message: 'Password changed successfully',
-              data: res,
-            });
-          });
+              this.staffRepo.findOneAndUpdate({ sub }, { password: hashPass });
+
+              resolve({
+                message: 'Password changed successfully',
+                data: res,
+              });
+            },
+          );
         },
         onFailure(err) {
           console.error('Error authenticating user', err);
