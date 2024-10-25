@@ -16,6 +16,7 @@ import { ConfigService } from '@nestjs/config';
 import { Requester } from './entities/requester.entity';
 import { UpdateRequesterDto } from './dto/update-requester.dto';
 import { ChangePasswordDto } from '@app/common';
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class RequesterService {
@@ -72,6 +73,10 @@ export class RequesterService {
             reject(err);
           } else {
             createRequesterDTO.sub = res.userSub;
+            createRequesterDTO.password = await bcrypt.hash(
+              createRequesterDTO.password,
+              10,
+            );
             const requesterToSave = new Requester({ ...createRequesterDTO });
             await this.requesterRepo.create(requesterToSave);
             const moveUserToGroupCmd = new AdminAddUserToGroupCommand({
@@ -136,23 +141,29 @@ export class RequesterService {
     return new Promise((resolve, reject) => {
       userCognito.authenticateUser(authenticationDetails, {
         onSuccess: () => {
-          userCognito.changePassword(oldPassword, newPassword, (err, res) => {
-            if (err) {
-              console.error('Error changing password', err);
-              reject(err);
-              return;
-            }
+          userCognito.changePassword(
+            oldPassword,
+            newPassword,
+            async (err, res) => {
+              if (err) {
+                console.error('Error changing password', err);
+                reject(err);
+                return;
+              }
 
-            this.requesterRepo.findOneAndUpdate(
-              { sub },
-              { password: newPassword },
-            );
+              const hashPass = await bcrypt.hash(newPassword, 10);
 
-            resolve({
-              message: 'Password changed successfully',
-              data: res,
-            });
-          });
+              this.requesterRepo.findOneAndUpdate(
+                { sub },
+                { password: hashPass },
+              );
+
+              resolve({
+                message: 'Password changed successfully',
+                data: res,
+              });
+            },
+          );
         },
 
         onFailure(err) {
