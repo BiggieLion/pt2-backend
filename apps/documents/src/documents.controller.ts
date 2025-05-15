@@ -1,7 +1,10 @@
 import {
   Controller,
   FileTypeValidator,
+  Get,
+  HttpException,
   MaxFileSizeValidator,
+  Param,
   ParseFilePipe,
   Post,
   UploadedFile,
@@ -16,30 +19,13 @@ import { CurrentUser, JwtAuthGuard, Roles } from '@app/common';
 export class DocumentsController {
   constructor(private readonly documentsSvc: DocumentsService) {}
 
-  @UseGuards(JwtAuthGuard)
-  @Roles('requester')
-  @UseInterceptors(FileInterceptor('file'))
-  @Post('ine')
-  async uploadIne(
-    @UploadedFile(
-      new ParseFilePipe({
-        validators: [
-          new MaxFileSizeValidator({ maxSize: 1500000 }),
-          new FileTypeValidator({ fileType: 'application/pdf' }),
-        ],
-      }),
-    )
-    ine: Express.Multer.File,
-    @CurrentUser() user,
-  ) {
-    return await this.documentsSvc.uploadFile(ine.buffer, user?.id, 'ine');
-  }
+  validDocsTypes: string[] = ['ine', 'birth', 'domicile', 'tax'];
 
   @UseGuards(JwtAuthGuard)
   @Roles('requester')
   @UseInterceptors(FileInterceptor('file'))
-  @Post('birth')
-  async uploadBirthCertificate(
+  @Post(':fileType')
+  async uploadFile(
     @UploadedFile(
       new ParseFilePipe({
         validators: [
@@ -48,51 +34,30 @@ export class DocumentsController {
         ],
       }),
     )
-    birth: Express.Multer.File,
-    @CurrentUser() user,
+    file: Express.Multer.File,
+    @CurrentUser() user: any,
+    @Param('fileType') fileType: string,
   ) {
-    return await this.documentsSvc.uploadFile(birth.buffer, user?.id, 'birth');
+    if (!this.validDocsTypes.includes(fileType))
+      throw new HttpException(
+        { message: `${fileType} is not a valid document type` },
+        400,
+      );
+    return await this.documentsSvc.uploadFile(file.buffer, user?.id, fileType);
   }
 
   @UseGuards(JwtAuthGuard)
-  @Roles('requester')
-  @UseInterceptors(FileInterceptor('file'))
-  @Post('domicile')
-  async uploadDomicileVoucher(
-    @UploadedFile(
-      new ParseFilePipe({
-        validators: [
-          new MaxFileSizeValidator({ maxSize: 1500000 }),
-          new FileTypeValidator({ fileType: 'application/pdf' }),
-        ],
-      }),
-    )
-    domicile: Express.Multer.File,
-    @CurrentUser() user,
+  @Roles('requester', 'analyst', 'supervisor')
+  @Get(':fileType')
+  async getFileFromS3(
+    @CurrentUser() user: any,
+    @Param('fileType') fileType: string,
   ) {
-    return await this.documentsSvc.uploadFile(
-      domicile.buffer,
-      user?.id,
-      'domicile',
-    );
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @Roles('requester')
-  @UseInterceptors(FileInterceptor('file'))
-  @Post('tax')
-  async uploadTaxCertificate(
-    @UploadedFile(
-      new ParseFilePipe({
-        validators: [
-          new MaxFileSizeValidator({ maxSize: 1500000 }),
-          new FileTypeValidator({ fileType: 'application/pdf' }),
-        ],
-      }),
-    )
-    tax: Express.Multer.File,
-    @CurrentUser() user,
-  ) {
-    return await this.documentsSvc.uploadFile(tax.buffer, user?.id, 'tax');
+    if (!this.validDocsTypes.includes(fileType))
+      throw new HttpException(
+        { message: `${fileType} is not a valid document type` },
+        400,
+      );
+    return await this.documentsSvc.getFile(user?.id, fileType);
   }
 }
