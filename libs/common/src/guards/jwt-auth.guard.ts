@@ -7,7 +7,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { catchError, map, Observable, of, tap } from 'rxjs';
-import { AUTH_SERVICE } from '../constants/services.constants';
+import { AUTH_SERVICE } from '@app/common/constants';
 import { ClientProxy } from '@nestjs/microservices';
 import { Reflector } from '@nestjs/core';
 import { UserDto } from '../dto';

@@ -11,7 +11,7 @@ import {
 import { RequestsService } from './requests.service';
 import { CreateRequestDto } from './dto/create-request.dto';
 import { UpdateRequestDto } from './dto/update-request.dto';
-import { CurrentUser, JwtAuthGuard, Roles } from '@app/common';
+import { CurrentUser, JwtAuthGuard, Roles, UserDto } from '@app/common';
 
 @Controller('requests')
 export class RequestsController {
@@ -22,20 +22,23 @@ export class RequestsController {
   @UseGuards(JwtAuthGuard)
   @Roles('requester')
   @Post()
-  create(@CurrentUser() userInfo, @Body() createRequestDTO: CreateRequestDto) {
+  create(
+    @CurrentUser() userInfo: UserDto,
+    @Body() createRequestDTO: CreateRequestDto,
+  ) {
     createRequestDTO.requester_id = userInfo?.id;
     return this.requestsService.create(
       createRequestDTO,
-      userInfo?.email,
-      userInfo?.name,
+      userInfo.email,
+      userInfo.name,
     );
   }
 
   @UseGuards(JwtAuthGuard)
   @Roles('requester')
   @Get('/requester')
-  findAllByCurrentRequester(@CurrentUser() user) {
-    return this.requestsService.findByRequester(user?.id);
+  findAllByCurrentRequester(@CurrentUser() user: UserDto) {
+    return this.requestsService.findByRequester(user.id);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -48,8 +51,8 @@ export class RequestsController {
   @UseGuards(JwtAuthGuard)
   @Roles('analyst')
   @Get('/analyst')
-  findAllByCurrentAnalyst(@CurrentUser() user) {
-    return this.requestsService.findByAnalyst(user?.id);
+  findAllByCurrentAnalyst(@CurrentUser() user: UserDto) {
+    return this.requestsService.findByAnalyst(user.id);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -62,8 +65,8 @@ export class RequestsController {
   @UseGuards(JwtAuthGuard)
   @Roles('supervisor')
   @Get('/supervisor')
-  findAllByCurrentSupervisor(@CurrentUser() user) {
-    return this.requestsService.findBySupervisor(user?.id);
+  findAllByCurrentSupervisor(@CurrentUser() user: UserDto) {
+    return this.requestsService.findBySupervisor(user.id);
   }
 
   @UseGuards(JwtAuthGuard)

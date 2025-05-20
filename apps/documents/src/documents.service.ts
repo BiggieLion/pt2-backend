@@ -3,73 +3,89 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import {
   GetObjectCommand,
   HeadObjectCommand,
   PutObjectCommand,
   S3Client,
 } from '@aws-sdk/client-s3';
-import { ConfigService } from '@nestjs/config';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
 @Injectable()
 export class DocumentsService {
   constructor(private readonly configSvc: ConfigService) {}
 
+  private readonly region: string = this.configSvc.getOrThrow('aws.region');
+  private readonly accessKey: string =
+    this.configSvc.getOrThrow('aws.accessKey');
+  private readonly secretKey: string =
+    this.configSvc.getOrThrow('aws.secretKey');
+  private readonly bucketName: string = this.configSvc.getOrThrow('s3.bucket');
   private readonly s3Client = new S3Client({
-    region: this.configSvc.getOrThrow('aws.region'),
+    region: this.region,
     credentials: {
-      accessKeyId: this.configSvc.getOrThrow('aws.accessKey'),
-      secretAccessKey: this.configSvc.getOrThrow('aws.secretKey'),
+      accessKeyId: this.accessKey,
+      secretAccessKey: this.secretKey,
     },
   });
 
-  async uploadFile(fileBuffer: Buffer, userId: string, fileType: string) {
-    await this.s3Client.send(
-      new PutObjectCommand({
-        Bucket: this.configSvc.getOrThrow('s3.bucket'),
-        Key: `${userId}-${fileType}.pdf`,
-        Body: fileBuffer,
-      }),
-    );
+  private getObjectKey(userId: string, fileType: string): string {
+    return `${userId}-${fileType}.pdf`;
+  }
 
-    return {
-      message: `${fileType.toUpperCase()} uploaded successfully`,
-    };
+  async uploadFile(fileBuffer: Buffer, userId: string, fileType: string) {
+    try {
+      await this.s3Client.send(
+        new PutObjectCommand({
+          Bucket: this.bucketName,
+          Key: this.getObjectKey(userId, fileType),
+          Body: fileBuffer,
+        }),
+      );
+
+      return {
+        message: `File ${fileType?.toUpperCase()} uploaded successfully`,
+      };
+    } catch (e) {
+      throw new InternalServerErrorException(
+        `Error uploading file ${fileType?.toUpperCase()}`,
+      );
+    }
   }
 
   async getFile(userId: string, fileType: string) {
     try {
-      const bucket: string = this.configSvc.getOrThrow('s3.bucket');
-      const key: string = `${userId}-${fileType}.pdf`;
       await this.s3Client.send(
         new HeadObjectCommand({
-          Bucket: bucket,
-          Key: key,
+          Bucket: this.bucketName,
+          Key: this.getObjectKey(userId, fileType),
         }),
       );
-      const signedUrl = await getSignedUrl(
+
+      const signedUrl: string = await getSignedUrl(
         this.s3Client,
         new GetObjectCommand({
-          Bucket: bucket,
-          Key: key,
+          Bucket: this.bucketName,
+          Key: this.getObjectKey(userId, fileType),
           ResponseContentType: 'application/pdf',
         }),
         { expiresIn: 3600 },
       );
 
       return {
-        message: `${fileType.toUpperCase()} returned successfully`,
+        message: `File ${fileType?.toUpperCase()} found successfully`,
         data: { url: signedUrl },
       };
-    } catch (error) {
-      if (error?.name === 'NotFound') {
-        throw new NotFoundException(`File ${fileType} does not exist`);
-      } else {
-        throw new InternalServerErrorException(
-          `Error getting file ${fileType} from S3 bucket`,
+    } catch (e) {
+      if (e?.name === 'NotFound')
+        throw new NotFoundException(
+          `File ${fileType?.toUpperCase()} not found`,
         );
-      }
+      else
+        throw new InternalServerErrorException(
+          `Error getting file ${fileType?.toUpperCase()}`,
+        );
     }
   }
 }

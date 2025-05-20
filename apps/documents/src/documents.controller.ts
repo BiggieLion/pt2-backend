@@ -13,13 +13,20 @@ import {
 } from '@nestjs/common';
 import { DocumentsService } from './documents.service';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { CurrentUser, JwtAuthGuard, Roles } from '@app/common';
+import { CurrentUser, JwtAuthGuard, Roles, UserDto } from '@app/common';
+import { DocumentTypeEnum } from './documentType.enum';
 
 @Controller('documents')
 export class DocumentsController {
   constructor(private readonly documentsSvc: DocumentsService) {}
 
-  validDocsTypes: string[] = ['ine', 'birth', 'domicile', 'tax'];
+  private validateDocumentType(fileType: string): void {
+    if (!Object.values(DocumentTypeEnum).includes(fileType as DocumentTypeEnum))
+      throw new HttpException(
+        { message: `${fileType.toUpperCase()} is not a valid document type` },
+        400,
+      );
+  }
 
   @UseGuards(JwtAuthGuard)
   @Roles('requester')
@@ -35,29 +42,33 @@ export class DocumentsController {
       }),
     )
     file: Express.Multer.File,
-    @CurrentUser() user: any,
+    @CurrentUser() user: UserDto,
     @Param('fileType') fileType: string,
   ) {
-    if (!this.validDocsTypes.includes(fileType))
-      throw new HttpException(
-        { message: `${fileType} is not a valid document type` },
-        400,
-      );
+    console.log('<----- user ----->', user);
+    this.validateDocumentType(fileType);
     return await this.documentsSvc.uploadFile(file.buffer, user?.id, fileType);
   }
 
   @UseGuards(JwtAuthGuard)
   @Roles('requester', 'analyst', 'supervisor')
   @Get(':fileType')
-  async getFileFromS3(
-    @CurrentUser() user: any,
+  async getDocument(
+    @CurrentUser() user: UserDto,
     @Param('fileType') fileType: string,
   ) {
-    if (!this.validDocsTypes.includes(fileType))
-      throw new HttpException(
-        { message: `${fileType} is not a valid document type` },
-        400,
-      );
+    this.validateDocumentType(fileType);
     return await this.documentsSvc.getFile(user?.id, fileType);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Roles('requester', 'analyst', 'supervisor')
+  @Get(':userId/:fileType')
+  async getDocumentByUserId(
+    @Param('userId') userId: string,
+    @Param('fileType') fileType: string,
+  ) {
+    this.validateDocumentType(fileType);
+    return await this.documentsSvc.getFile(userId, fileType);
   }
 }
