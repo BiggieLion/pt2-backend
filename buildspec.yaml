@@ -9,22 +9,22 @@ phases:
     commands:
       - echo Building Dockers images...
 
-      - docker build -t auth -f ./Dockerfile ../../
+      - docker build -t auth -f ./apps/auth/Dockerfile ../../
       - docker tag auth:latest 529088267818.dkr.ecr.us-east-1.amazonaws.com/auth:latest
 
-      - docker build -t documents -f ./Dockerfile ../../
+      - docker build -t documents -f ./apps/documents/Dockerfile ../../
       - docker tag documents:latest 529088267818.dkr.ecr.us-east-1.amazonaws.com/documents:latest
 
-      - docker build -t notifications -f ./Dockerfile ../../
+      - docker build -t notifications -f ./apps/notifications/Dockerfile ../../
       - docker tag notifications:latest 529088267818.dkr.ecr.us-east-1.amazonaws.com/notifications:latest
 
-      - docker build -t request -f ./Dockerfile ../../
+      - docker build -t request -f ./apps/request/Dockerfile ../../
       - docker tag request:latest 529088267818.dkr.ecr.us-east-1.amazonaws.com/request:latest
 
-      - docker build -t requester -f ./Dockerfile ../../
+      - docker build -t requester -f ./apps/requester/Dockerfile ../../
       - docker tag requester:latest 529088267818.dkr.ecr.us-east-1.amazonaws.com/requester:latest
 
-      - docker build -t staff -f ./Dockerfile ../../
+      - docker build -t staff -f ./apps/staff/Dockerfile ../../
       - docker tag staff:latest 529088267818.dkr.ecr.us-east-1.amazonaws.com/staff:latest
   post_build:
     commands:
