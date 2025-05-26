@@ -1,0 +1,37 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 529088267818.dkr.ecr.us-east-1.amazonaws.com
+  build:
+    commands:
+      - echo Building Dockers images...
+
+      - docker build -t auth -f ./Dockerfile ../../
+      - docker tag auth:latest 529088267818.dkr.ecr.us-east-1.amazonaws.com/auth:latest
+
+      - docker build -t documents -f ./Dockerfile ../../
+      - docker tag documents:latest 529088267818.dkr.ecr.us-east-1.amazonaws.com/documents:latest
+
+      - docker build -t notifications -f ./Dockerfile ../../
+      - docker tag notifications:latest 529088267818.dkr.ecr.us-east-1.amazonaws.com/notifications:latest
+
+      - docker build -t request -f ./Dockerfile ../../
+      - docker tag request:latest 529088267818.dkr.ecr.us-east-1.amazonaws.com/request:latest
+
+      - docker build -t requester -f ./Dockerfile ../../
+      - docker tag requester:latest 529088267818.dkr.ecr.us-east-1.amazonaws.com/requester:latest
+
+      - docker build -t staff -f ./Dockerfile ../../
+      - docker tag staff:latest 529088267818.dkr.ecr.us-east-1.amazonaws.com/staff:latest
+  post_build:
+    commands:
+      - echo Pushing images into AWS
+      - docker push 529088267818.dkr.ecr.us-east-1.amazonaws.com/auth:latest
+      - docker push 529088267818.dkr.ecr.us-east-1.amazonaws.com/documents:latest
+      - docker push 529088267818.dkr.ecr.us-east-1.amazonaws.com/notifications:latest
+      - docker push 529088267818.dkr.ecr.us-east-1.amazonaws.com/request:latest
+      - docker push 529088267818.dkr.ecr.us-east-1.amazonaws.com/requester:latest
+      - docker push 529088267818.dkr.ecr.us-east-1.amazonaws.com/staff:latest
