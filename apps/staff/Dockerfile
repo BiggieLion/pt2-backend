@@ -14,7 +14,8 @@ RUN npm install
 COPY apps/staff apps/staff
 COPY libs libs
 
-RUN npm run build
+RUN cd apps/staff && npm install
+RUN npm run build staff
 
 FROM node:alpine AS production
 

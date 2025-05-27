@@ -1,7 +1,7 @@
 {
-  "name": "@pt2-backend/auth",
+  "name": "@pt2-backend/notifications",
   "version": "1.0.0",
-  "description": "The Auth microservice for PT2 Backend system",
+  "description": "The notifications service for pt2 backend system",
   "license": "ISC",
   "author": "Jair León && Enrique Sánchez",
   "type": "commonjs",
@@ -13,12 +13,9 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "@nestjs/passport": "^10.0.3",
-    "jwks-rsa": "^3.1.0",
-    "passport": "^0.7.0",
-    "passport-jwt": "^4.0.1"
+    "nest-resend": "^3.0.0"
   },
   "devDependencies": {
-    "@types/passport-jwt": "^4.0.1"
+    "@types/nodemailer": "^6.4.16"
   }
 }
