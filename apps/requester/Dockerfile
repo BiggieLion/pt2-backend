@@ -8,6 +8,7 @@ WORKDIR /usr/src/app
 COPY package.json ./
 COPY package-lock.json ./
 COPY tsconfig.json tsconfig.json
+COPY nest-cli.json nest-cli.json
 COPY apps/requester apps/requester
 COPY libs libs
 
