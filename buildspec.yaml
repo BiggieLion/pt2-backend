@@ -8,22 +8,29 @@ phases:
   build:
     commands:
       - echo Build started on `date`
-      - echo Building Docker images...
 
+      - echo Building and tagging auth docker image...
       - docker build -t auth -f ./apps/auth/Dockerfile . --no-cache
-      - docker build -t documents -f ./apps/documents/Dockerfile . --no-cache
-      - docker build -t notifications -f ./apps/notifications/Dockerfile . --no-cache
-      - docker build -t request -f ./apps/request/Dockerfile . --no-cache
-      - docker build -t requester -f ./apps/requester/Dockerfile . --no-cache
-      - docker build -t staff -f ./apps/staff/Dockerfile . --no-cache
-
-      - echo Tagging Docker images...
-
       - docker tag auth:latest 529088267818.dkr.ecr.us-east-1.amazonaws.com/auth:latest
+
+      - echo Building and tagging documents docker image...
+      - docker build -t documents -f ./apps/documents/Dockerfile . --no-cache
       - docker tag documents:latest 529088267818.dkr.ecr.us-east-1.amazonaws.com/documents:latest
+
+      - echo Building and tagging notifications docker image...
+      - docker build -t notifications -f ./apps/notifications/Dockerfile . --no-cache
       - docker tag notifications:latest 529088267818.dkr.ecr.us-east-1.amazonaws.com/notifications:latest
+
+      - echo Building and tagging request docker images...
+      - docker build -t request -f ./apps/request/Dockerfile . --no-cache
       - docker tag request:latest 529088267818.dkr.ecr.us-east-1.amazonaws.com/request:latest
+
+      - echo Building and tagging requester and staff docker images...
+      - docker build -t requester -f ./apps/requester/Dockerfile . --no-cache
       - docker tag requester:latest 529088267818.dkr.ecr.us-east-1.amazonaws.com/requester:latest
+
+      - echo Building and tagging staff docker image...
+      - docker build -t staff -f ./apps/staff/Dockerfile . --no-cache
       - docker tag staff:latest 529088267818.dkr.ecr.us-east-1.amazonaws.com/staff:latest
   post_build:
     commands:
