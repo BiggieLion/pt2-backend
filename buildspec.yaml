@@ -10,12 +10,12 @@ phases:
       - echo Build started on `date`
       - echo Building Docker images...
 
-      - docker build -t auth -f ./apps/auth/Dockerfile .
-      - docker build -t documents -f ./apps/documents/Dockerfile .
-      - docker build -t notifications -f ./apps/notifications/Dockerfile .
-      - docker build -t request -f ./apps/request/Dockerfile .
-      - docker build -t requester -f ./apps/requester/Dockerfile .
-      - docker build -t staff -f ./apps/staff/Dockerfile .
+      - docker build -t auth -f ./apps/auth/Dockerfile . --no-cache
+      - docker build -t documents -f ./apps/documents/Dockerfile . --no-cache
+      - docker build -t notifications -f ./apps/notifications/Dockerfile . --no-cache
+      - docker build -t request -f ./apps/request/Dockerfile . --no-cache
+      - docker build -t requester -f ./apps/requester/Dockerfile . --no-cache
+      - docker build -t staff -f ./apps/staff/Dockerfile . --no-cache
 
       - echo Tagging Docker images...
 
