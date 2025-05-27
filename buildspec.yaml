@@ -7,27 +7,27 @@ phases:
       - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 529088267818.dkr.ecr.us-east-1.amazonaws.com
   build:
     commands:
-      - echo Building Dockers images...
+      - echo Build started on `date`
+      - echo Building Docker images...
 
       - docker build -t auth -f ./apps/auth/Dockerfile .
-      - docker tag auth:latest 529088267818.dkr.ecr.us-east-1.amazonaws.com/auth:latest
-
       - docker build -t documents -f ./apps/documents/Dockerfile .
-      - docker tag documents:latest 529088267818.dkr.ecr.us-east-1.amazonaws.com/documents:latest
-
       - docker build -t notifications -f ./apps/notifications/Dockerfile .
-      - docker tag notifications:latest 529088267818.dkr.ecr.us-east-1.amazonaws.com/notifications:latest
-
       - docker build -t request -f ./apps/request/Dockerfile .
-      - docker tag request:latest 529088267818.dkr.ecr.us-east-1.amazonaws.com/request:latest
-
       - docker build -t requester -f ./apps/requester/Dockerfile .
-      - docker tag requester:latest 529088267818.dkr.ecr.us-east-1.amazonaws.com/requester:latest
-
       - docker build -t staff -f ./apps/staff/Dockerfile .
+
+      - echo Tagging Docker images...
+
+      - docker tag auth:latest 529088267818.dkr.ecr.us-east-1.amazonaws.com/auth:latest
+      - docker tag documents:latest 529088267818.dkr.ecr.us-east-1.amazonaws.com/documents:latest
+      - docker tag notifications:latest 529088267818.dkr.ecr.us-east-1.amazonaws.com/notifications:latest
+      - docker tag request:latest 529088267818.dkr.ecr.us-east-1.amazonaws.com/request:latest
+      - docker tag requester:latest 529088267818.dkr.ecr.us-east-1.amazonaws.com/requester:latest
       - docker tag staff:latest 529088267818.dkr.ecr.us-east-1.amazonaws.com/staff:latest
   post_build:
     commands:
+      - echo Build completed on `date`
       - echo Pushing images into AWS
       - docker push 529088267818.dkr.ecr.us-east-1.amazonaws.com/auth:latest
       - docker push 529088267818.dkr.ecr.us-east-1.amazonaws.com/documents:latest
