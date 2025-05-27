@@ -1,0 +1,23 @@
+{
+  "name": "@pt2-backend/auth",
+  "version": "1.0.0",
+  "description": "The AUTH microservice for PT2 Backend system",
+  "license": "ISC",
+  "author": "Jair León && Enrique Sánchez",
+  "type": "commonjs",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@nestjs/passport": "^10.0.3",
+    "jwks-rsa": "^3.1.0",
+    "passport": "^0.7.0",
+    "passport-jwt": "^4.0.1"
+  },
+  "devDependencies": {
+  }
+}
