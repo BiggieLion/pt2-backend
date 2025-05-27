@@ -1,7 +1,7 @@
 {
-  "name": "@pt2-backend/auth",
+  "name": "@pt2-backend/requester",
   "version": "1.0.0",
-  "description": "The Auth microservice for PT2 Backend system",
+  "description": "The requester service for pt2 backend system",
   "license": "ISC",
   "author": "Jair León && Enrique Sánchez",
   "type": "commonjs",
@@ -13,12 +13,11 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "@nestjs/passport": "^10.0.3",
-    "jwks-rsa": "^3.1.0",
-    "passport": "^0.7.0",
-    "passport-jwt": "^4.0.1"
+    "@aws-sdk/client-cognito-identity-provider": "^3.658.1",
+    "amazon-cognito-identity-js": "^6.3.12",
+    "bcryptjs": "^2.4.3"
   },
   "devDependencies": {
-    "@types/passport-jwt": "^4.0.1"
+    "@types/bcryptjs": "^2.4.6"
   }
 }

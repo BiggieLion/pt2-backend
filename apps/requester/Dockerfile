@@ -14,7 +14,8 @@ RUN npm install
 COPY apps/requester apps/requester
 COPY libs libs
 
-RUN npm run build
+RUN cd apps/requester && npm install
+RUN npm run build requester
 
 FROM node:alpine AS production
 

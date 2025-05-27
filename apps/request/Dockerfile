@@ -14,7 +14,7 @@ RUN npm install
 COPY apps/request apps/request
 COPY libs libs
 
-RUN npm run build
+RUN npm run build request
 
 FROM node:alpine AS production
 

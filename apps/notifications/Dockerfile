@@ -14,7 +14,8 @@ RUN npm install
 COPY apps/notifications apps/notifications
 COPY libs libs
 
-RUN npm run build
+RUN cd apps/notifications && npm install
+RUN npm run build notifications
 
 FROM node:alpine AS production
 

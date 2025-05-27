@@ -8,13 +8,15 @@ WORKDIR /usr/src/app
 COPY package.json ./
 COPY package-lock.json ./
 COPY tsconfig.json tsconfig.json
+COPY nest-cli.json nest-cli.json
 
 RUN npm install
 
 COPY apps/documents apps/documents
 COPY libs libs
 
-RUN npm run build
+RUN cd apps/documents && npm install
+RUN npm run build documents
 
 FROM node:alpine AS production
 
