@@ -10,7 +10,8 @@ COPY package-lock.json ./
 
 RUN npm install
 
-COPY . .
+COPY apps/auth apps/auth
+COPY libs libs
 
 RUN npm run build
 
