@@ -8,13 +8,11 @@ WORKDIR /usr/src/app
 COPY package.json ./
 COPY package-lock.json ./
 COPY tsconfig.json tsconfig.json
-
-RUN npm install
-
 COPY apps/requester apps/requester
 COPY libs libs
 
-RUN cd apps/requester && npm install
+RUN npm install
+
 RUN npm run build requester
 
 FROM node:alpine AS production
