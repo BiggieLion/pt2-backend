@@ -8,11 +8,10 @@ WORKDIR /usr/src/app
 COPY package.json ./
 COPY package-lock.json ./
 COPY tsconfig.json tsconfig.json
-
-RUN npm install
-
 COPY apps/request apps/request
 COPY libs libs
+
+RUN npm install
 
 RUN npm run build request
 

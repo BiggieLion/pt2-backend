@@ -8,13 +8,11 @@ WORKDIR /usr/src/app
 COPY package.json ./
 COPY package-lock.json ./
 COPY tsconfig.json tsconfig.json
-
-RUN npm install
-
 COPY apps/staff apps/staff
 COPY libs libs
 
-RUN cd apps/staff && npm install
+RUN npm install
+
 RUN npm run build staff
 
 FROM node:alpine AS production

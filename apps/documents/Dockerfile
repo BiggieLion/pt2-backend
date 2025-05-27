@@ -8,15 +8,11 @@ WORKDIR /usr/src/app
 COPY package.json ./
 COPY package-lock.json ./
 COPY tsconfig.json tsconfig.json
-COPY nest-cli.json nest-cli.json
-
-RUN npm install
-RUN npm install @nestjs/throttler
-
 COPY apps/documents apps/documents
 COPY libs libs
 
-RUN cd apps/documents && npm install
+RUN npm install
+
 RUN npm run build documents
 
 FROM node:alpine AS production
