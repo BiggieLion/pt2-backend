@@ -11,6 +11,7 @@ COPY tsconfig.json tsconfig.json
 COPY nest-cli.json nest-cli.json
 
 RUN npm install
+RUN npm install @nestjs/throttler
 
 COPY apps/documents apps/documents
 COPY libs libs
