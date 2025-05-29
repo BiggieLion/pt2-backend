@@ -1,0 +1,255 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: documents
+  name: documents
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: documents
+  template:
+    metadata:
+      labels:
+        app: documents
+    spec:
+      containers:
+        - image: 529088267818.dkr.ecr.us-east-1.amazonaws.com/documents:latest
+          name: documents
+          env:
+            - name: DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: pt2-secrets
+                  key: DB_HOST
+            - name: DB_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: pt2-secrets
+                  key: DB_PORT
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: pt2-secrets
+                  key: DB_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: pt2-secrets
+                  key: DB_PASSWORD
+            - name: DB_DBNAME
+              valueFrom:
+                secretKeyRef:
+                  name: pt2-secrets
+                  key: DB_DBNAME
+            - name: DB_LOGGING
+              valueFrom:
+                secretKeyRef:
+                  name: pt2-secrets
+                  key: DB_LOGGING
+            - name: AWS_REGION
+              valueFrom:
+                secretKeyRef:
+                  name: pt2-secrets
+                  key: AWS_REGION
+            - name: AWS_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: pt2-secrets
+                  key: AWS_ACCESS_KEY
+            - name: AWS_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: pt2-secrets
+                  key: AWS_SECRET_KEY
+            - name: COGNITO_USER_POOL_ID
+              valueFrom:
+                secretKeyRef:
+                  name: pt2-secrets
+                  key: COGNITO_USER_POOL_ID
+            - name: COGNITO_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: pt2-secrets
+                  key: COGNITO_CLIENT_ID
+            - name: COGNITO_REQUESTER_GROUP
+              valueFrom:
+                secretKeyRef:
+                  name: pt2-secrets
+                  key: COGNITO_REQUESTER_GROUP
+            - name: COGNITO_ANALYST_GROUP
+              valueFrom:
+                secretKeyRef:
+                  name: pt2-secrets
+                  key: COGNITO_ANALYST_GROUP
+            - name: COGNITO_SUPERVISOR_GROUP
+              valueFrom:
+                secretKeyRef:
+                  name: pt2-secrets
+                  key: COGNITO_SUPERVISOR_GROUP
+            - name: COGNITO_AUTHORITY
+              valueFrom:
+                secretKeyRef:
+                  name: pt2-secrets
+                  key: COGNITO_AUTHORITY
+            - name: S3_BUCKET
+              valueFrom:
+                secretKeyRef:
+                  name: pt2-secrets
+                  key: S3_BUCKET
+            - name: UPLOAD_RATE_TTL
+              valueFrom:
+                secretKeyRef:
+                  name: pt2-secrets
+                  key: UPLOAD_RATE_TTL
+            - name: UPLOAD_RATE_LIMIT
+              valueFrom:
+                secretKeyRef:
+                  name: pt2-secrets
+                  key: UPLOAD_RATE_LIMIT
+            - name: RESEND_AUTH_USER
+              valueFrom:
+                secretKeyRef:
+                  name: pt2-secrets
+                  key: RESEND_AUTH_USER
+            - name: RESEND_AUTH_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: pt2-secrets
+                  key: RESEND_AUTH_PASSWORD
+            - name: RESEND_SMTP_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: pt2-secrets
+                  key: RESEND_SMTP_HOST
+            - name: RESEND_SMTP_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: pt2-secrets
+                  key: RESEND_SMTP_PORT
+            - name: RESEND_SMTP_EMAIL
+              valueFrom:
+                secretKeyRef:
+                  name: pt2-secrets
+                  key: RESEND_SMTP_EMAIL
+            - name: AUTH_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: pt2-secrets
+                  key: AUTH_HOST
+            - name: AUTH_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: pt2-secrets
+                  key: AUTH_PORT
+            - name: REQUEST_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: pt2-secrets
+                  key: REQUEST_HOST
+            - name: REQUEST_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: pt2-secrets
+                  key: REQUEST_PORT
+            - name: REQUESTER_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: pt2-secrets
+                  key: REQUESTER_HOST
+            - name: REQUESTER_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: pt2-secrets
+                  key: REQUESTER_PORT
+            - name: STAFF_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: pt2-secrets
+                  key: STAFF_HOST
+            - name: STAFF_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: pt2-secrets
+                  key: STAFF_PORT
+            - name: NOTIFICATIONS_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: pt2-secrets
+                  key: NOTIFICATIONS_HOST
+            - name: NOTIFICATIONS_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: pt2-secrets
+                  key: NOTIFICATIONS_PORT
+            - name: DOCUMENTS_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: pt2-secrets
+                  key: DOCUMENTS_HOST
+            - name: DOCUMENTS_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: pt2-secrets
+                  key: DOCUMENTS_PORT
+            - name: AUTH_HTTP_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: pt2-secrets
+                  key: AUTH_HTTP_PORT
+            - name: AUTH_TCP_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: pt2-secrets
+                  key: AUTH_TCP_PORT
+            - name: REQUEST_HTTP_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: pt2-secrets
+                  key: REQUEST_HTTP_PORT
+            - name: REQUEST_TCP_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: pt2-secrets
+                  key: REQUEST_TCP_PORT
+            - name: REQUESTER_HTTP_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: pt2-secrets
+                  key: REQUESTER_HTTP_PORT
+            - name: REQUESTER_TCP_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: pt2-secrets
+                  key: REQUESTER_TCP_PORT
+            - name: STAFF_HTTP_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: pt2-secrets
+                  key: STAFF_HTTP_PORT
+            - name: STAFF_TCP_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: pt2-secrets
+                  key: STAFF_TCP_PORT
+            - name: NOTIFICATIONS_HTTP_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: pt2-secrets
+                  key: NOTIFICATIONS_HTTP_PORT
+            - name: NOTIFICATIONS_TCP_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: pt2-secrets
+                  key: NOTIFICATIONS_TCP_PORT
+            - name: DOCUMENTS_HTTP_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: pt2-secrets
+                  key: DOCUMENTS_HTTP_PORT
+            - name: DOCUMENTS_TCP_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: pt2-secrets
+                  key: DOCUMENTS_TCP_PORT
