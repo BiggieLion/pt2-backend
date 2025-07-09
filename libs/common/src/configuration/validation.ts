@@ -11,6 +11,7 @@ export const validationSchema = Joi.object({
   DB_PASSWORD: Joi.string().required(),
   DB_DBNAME: Joi.string().required(),
   DB_LOGGING: Joi.boolean().required(),
+  AI_URL: Joi.string().required(),
   // AWS
   AWS_REGION: Joi.string().required(),
   AWS_ACCESS_KEY: Joi.string().required(),

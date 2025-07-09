@@ -10,12 +10,16 @@ import {
   NOTIFICATIONS_SERVICE,
 } from '@app/common/constants/services.constants';
 import { ConfigService } from '@nestjs/config';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
   imports: [
     DatabaseModule,
     DatabaseModule.forFeature([Request]),
     LoggerModule,
+    HttpModule.register({
+      timeout: 10000,
+    }),
     ClientsModule.registerAsync([
       {
         name: AUTH_SERVICE,

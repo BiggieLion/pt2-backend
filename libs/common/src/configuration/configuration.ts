@@ -1,6 +1,11 @@
+import * as process from 'node:process';
+
 export const configuration = () => ({
   node_env: process.env.NODE_ENV,
   port: process.env.PORT,
+  http_urls: {
+    ai: process.env.AI_URL,
+  },
   database: {
     host: process.env.DB_HOST,
     port: process.env.DB_PORT,

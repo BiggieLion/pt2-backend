@@ -45,7 +45,6 @@ export class DocumentsController {
     @CurrentUser() user: UserDto,
     @Param('fileType') fileType: string,
   ) {
-    console.log('<----- user ----->', user);
     this.validateDocumentType(fileType);
     return await this.documentsSvc.uploadFile(file.buffer, user?.id, fileType);
   }

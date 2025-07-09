@@ -1,15 +1,27 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  HttpException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateRequestDto } from './dto/create-request.dto';
 import { UpdateRequestDto } from './dto/update-request.dto';
 import { RequestRepository } from './request.repository';
 import { Request } from './entities/request.entity';
 import { NOTIFICATIONS_SERVICE } from '@app/common';
 import { ClientProxy } from '@nestjs/microservices';
+import { RequestIaDto } from './dto/request-ia.dto';
+import { HttpService } from '@nestjs/axios';
+import { ConfigService } from '@nestjs/config';
+import { lastValueFrom } from 'rxjs';
+import { AxiosError } from 'axios';
 
 @Injectable()
 export class RequestsService {
   constructor(
     private readonly requestRepository: RequestRepository,
+    private readonly configSvc: ConfigService,
+    private readonly httpSvc: HttpService,
     @Inject(NOTIFICATIONS_SERVICE)
     private readonly notificationSvc: ClientProxy,
   ) {}
@@ -74,6 +86,34 @@ export class RequestsService {
         updateRequestDto,
       ),
       message: 'Request updated successfully',
+    };
+  }
+
+  async sendRequestToAI(creditId: number, requestIaDto: RequestIaDto) {
+    let score: number | any;
+    let message: string;
+    if (requestIaDto.relation) {
+      score = Math.floor(Math.random() * 15) + 1;
+      message = 'Relation effort to big to be analyzed by AI';
+    } else {
+      message = 'Score got from AI model';
+      score = await lastValueFrom(
+        this.httpSvc.post(
+          this.configSvc.getOrThrow('http_urls.ai'),
+          requestIaDto,
+        ),
+      ).catch((err: AxiosError) => {
+        console.error('Error sending request to AI', err.message);
+        throw new HttpException(
+          { message: `Error getting score: ${err.message}` },
+          err.status,
+        );
+      });
+    }
+
+    return {
+      data: { score: score?.data?.score || score },
+      message,
     };
   }
 
