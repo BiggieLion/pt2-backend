@@ -9,6 +9,10 @@ import { Transport } from '@nestjs/microservices';
 async function bootstrap() {
   const app = await NestFactory.create(NotificationsModule);
   const configSvc = app.get(ConfigService);
+  app.enableCors({
+    origin: '*',
+    credentials: true,
+  });
   app.connectMicroservice({
     transport: Transport.TCP,
     options: {
@@ -24,4 +28,5 @@ async function bootstrap() {
   await app.startAllMicroservices();
   await app.listen(configSvc.getOrThrow('notifications.httpPort'));
 }
+
 bootstrap();
