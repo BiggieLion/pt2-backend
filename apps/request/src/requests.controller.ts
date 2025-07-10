@@ -28,11 +28,19 @@ export class RequestsController {
     @Body() createRequestDTO: CreateRequestDto,
   ) {
     createRequestDTO.requester_id = userInfo?.id;
+
     return this.requestsService.create(
       createRequestDTO,
       userInfo.email,
       userInfo.name,
     );
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Roles('requester', 'analyst', 'supervisor')
+  @Get(':id')
+  findByRequestId(@Param('id') id: string) {
+    return this.requestsService.fidByRequestId(+id);
   }
 
   @UseGuards(JwtAuthGuard)

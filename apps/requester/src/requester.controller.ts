@@ -13,6 +13,7 @@ import { RequesterService } from './requester.service';
 import { UpdateRequesterDto } from './dto/update-requester.dto';
 import { ChangePasswordDto } from '@app/common';
 import { CurrentUser, JwtAuthGuard, Roles } from '@app/common';
+import { MessagePattern, Payload } from '@nestjs/microservices';
 
 @Controller('requester')
 export class RequesterController {
@@ -27,6 +28,7 @@ export class RequesterController {
   @Roles('requester')
   @Get()
   findCurrentRequester(@CurrentUser() user) {
+    console.log('<-----findCurrentRequester', user, typeof user.id);
     return this.requesterSvc.findRequester(user?.id);
   }
 
@@ -79,5 +81,10 @@ export class RequesterController {
     @Body() changePasswordDTO: ChangePasswordDto,
   ) {
     return this.requesterSvc.changePassword(user?.id, changePasswordDTO);
+  }
+
+  @MessagePattern('get-email')
+  async getEmail(@Payload() requesterId: any) {
+    return this.requesterSvc.getRequesterEmail(requesterId);
   }
 }

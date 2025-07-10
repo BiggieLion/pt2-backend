@@ -1,10 +1,4 @@
-import {
-  IsBoolean,
-  IsNotEmpty,
-  IsNumber,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreateRequestDto {
   @IsString()
@@ -21,7 +15,7 @@ export class CreateRequestDto {
 
   @IsNumber()
   @IsNotEmpty()
-  credit_id: number;
+  credit_type: number; // 1->Personal, 2->House, 3->Warrant
 
   @IsString()
   @IsOptional()
@@ -35,6 +29,6 @@ export class CreateRequestDto {
   @IsOptional()
   url_address: string;
 
-  @IsBoolean()
-  is_approved: boolean;
+  @IsNumber()
+  status: number; // 1 -> Created, 2 -> Under revision, 3 -> Approved, 4- -> Rejected
 }

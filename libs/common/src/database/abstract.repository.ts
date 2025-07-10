@@ -3,6 +3,7 @@ import { AbstractEntity } from './abstract.entity';
 import {
   EntityManager,
   FindOptionsRelations,
+  FindOptionsSelect,
   FindOptionsWhere,
   Repository,
 } from 'typeorm';
@@ -22,12 +23,19 @@ export abstract class AbstractRepository<T extends AbstractEntity<T>> {
 
   async findOne(
     where: FindOptionsWhere<T>,
+    select?: FindOptionsSelect<T>,
     relations?: FindOptionsRelations<T>,
   ): Promise<T> {
-    const entity = await this.itemsRepository.findOne({ where, relations });
+    const entity = await this.itemsRepository.findOne({
+      where,
+      select,
+      relations,
+    });
 
     if (!entity) {
-      this.logger.warn('Entity not found with where condition ', where);
+      this.logger.warn(
+        `Entity not found with the next conditions: ${where}\n${select}\n${relations} `,
+      );
       throw new NotFoundException('Entity not found');
     }
 
@@ -51,8 +59,8 @@ export abstract class AbstractRepository<T extends AbstractEntity<T>> {
     return this.findOne(where);
   }
 
-  async find(where: FindOptionsWhere<T>) {
-    return this.itemsRepository.findBy(where);
+  async find(where: FindOptionsWhere<T>, select?: FindOptionsSelect<T>) {
+    return this.itemsRepository.find({ where, select });
   }
 
   async findOneAndDelete(where: FindOptionsWhere<T>) {

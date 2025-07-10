@@ -13,7 +13,7 @@ export class Request extends AbstractEntity<Request> {
   supervisor_id: string;
 
   @Column({ nullable: false, type: 'smallint' })
-  credit_id: number;
+  credit_type: number;
 
   @Column({ nullable: true, type: 'varchar' })
   url_ine: string;
@@ -24,8 +24,8 @@ export class Request extends AbstractEntity<Request> {
   @Column({ nullable: true, type: 'varchar' })
   url_address: string;
 
-  @Column({ nullable: false, type: 'boolean', default: false })
-  is_approved: boolean;
+  @Column({ nullable: false, type: 'smallint', default: 1 })
+  status: number;
 
   @CreateDateColumn({
     type: 'timestamp',
