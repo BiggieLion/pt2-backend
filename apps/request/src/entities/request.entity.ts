@@ -33,10 +33,10 @@ export class Request extends AbstractEntity<Request> {
   @Column({ nullable: false, type: 'int' })
   amount: number;
 
-  @Column({ nullable: false, type: 'smallint' })
+  @Column({ nullable: true, type: 'smallint' })
   guarantee_type: number;
 
-  @Column({ nullable: false, type: 'int' })
+  @Column({ nullable: true, type: 'int' })
   guarantee_value: number;
 
   @CreateDateColumn({

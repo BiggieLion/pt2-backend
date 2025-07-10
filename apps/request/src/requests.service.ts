@@ -48,9 +48,21 @@ export class RequestsService {
   }
 
   async fidByRequestId(id: number) {
+    const request: Request = await this.requestRepository.findOne(
+      { id: id },
+      { requester_id: true },
+    );
+    const requester: any = await lastValueFrom(
+      this.requesterSvc.send('get-requester', request.requester_id),
+    );
+    delete requester?.email;
+    delete requester?.password;
     return {
       message: 'Request found successfully',
-      data: (await this.requestRepository.findOne({ id })) || {},
+      data: {
+        ...((await this.requestRepository.findOne({ id })) || {}),
+        ...(requester || {}),
+      },
     };
   }
 

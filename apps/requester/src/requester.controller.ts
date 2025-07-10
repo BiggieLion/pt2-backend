@@ -28,7 +28,6 @@ export class RequesterController {
   @Roles('requester')
   @Get()
   findCurrentRequester(@CurrentUser() user) {
-    console.log('<-----findCurrentRequester', user, typeof user.id);
     return this.requesterSvc.findRequester(user?.id);
   }
 
@@ -84,7 +83,12 @@ export class RequesterController {
   }
 
   @MessagePattern('get-email')
-  async getEmail(@Payload() requesterId: any) {
+  getEmail(@Payload() requesterId: string) {
     return this.requesterSvc.getRequesterEmail(requesterId);
+  }
+
+  @MessagePattern('get-requester')
+  getRequester(@Payload() requesterId: string) {
+    return this.requesterSvc.getRequester(requesterId);
   }
 }
