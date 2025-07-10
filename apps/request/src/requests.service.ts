@@ -13,7 +13,7 @@ import { ClientProxy } from '@nestjs/microservices';
 import { RequestIaDto } from './dto/request-ia.dto';
 import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
-import { catchError, lastValueFrom, of, tap } from 'rxjs';
+import { lastValueFrom } from 'rxjs';
 import { AxiosError } from 'axios';
 
 @Injectable()
@@ -63,6 +63,17 @@ export class RequestsService {
     return {
       data: requests,
       message: 'Requests found successfully',
+    };
+  }
+
+  async findAllRequests() {
+    const requests = await this.requestRepository.find();
+    if (requests.length === 0) {
+      throw new NotFoundException('Requests not found');
+    }
+    return {
+      message: 'Requests found successfully',
+      data: requests,
     };
   }
 

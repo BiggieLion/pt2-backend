@@ -35,7 +35,14 @@ export class StaffController {
 
   @UseGuards(JwtAuthGuard)
   @Roles('supervisor')
-  @Get('analyst/:sub')
+  @Get('/analyst/all')
+  findAllAnalysts() {
+    return this.staffSvc.findAllAnalysts();
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Roles('supervisor')
+  @Get('analyst/id/:sub')
   findAnalyst(@Param('sub') sub: string) {
     return this.staffSvc.findAnalyst(sub);
   }

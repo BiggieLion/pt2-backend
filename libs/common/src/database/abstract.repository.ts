@@ -59,7 +59,7 @@ export abstract class AbstractRepository<T extends AbstractEntity<T>> {
     return this.findOne(where);
   }
 
-  async find(where: FindOptionsWhere<T>, select?: FindOptionsSelect<T>) {
+  async find(where?: FindOptionsWhere<T>, select?: FindOptionsSelect<T>) {
     return this.itemsRepository.find({ where, select });
   }
 

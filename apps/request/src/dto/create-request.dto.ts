@@ -30,5 +30,22 @@ export class CreateRequestDto {
   url_address: string;
 
   @IsNumber()
+  @IsOptional()
   status: number; // 1 -> Created, 2 -> Under revision, 3 -> Approved, 4- -> Rejected
+
+  @IsNumber()
+  @IsNotEmpty()
+  loan_term: number;
+
+  @IsNumber()
+  @IsNotEmpty()
+  amount: number;
+
+  @IsNumber()
+  @IsOptional()
+  guarantee_type: number;
+
+  @IsNumber()
+  @IsOptional()
+  guarantee_value: number;
 }

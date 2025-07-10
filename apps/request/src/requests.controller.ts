@@ -38,9 +38,16 @@ export class RequestsController {
 
   @UseGuards(JwtAuthGuard)
   @Roles('requester', 'analyst', 'supervisor')
-  @Get(':id')
+  @Get('/id/:id')
   findByRequestId(@Param('id') id: string) {
     return this.requestsService.fidByRequestId(+id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Roles('supervisor')
+  @Get('/all')
+  findAllRequests() {
+    return this.requestsService.findAllRequests();
   }
 
   @UseGuards(JwtAuthGuard)

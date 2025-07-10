@@ -108,6 +108,14 @@ export class StaffService {
     };
   }
 
+  async findAllAnalysts() {
+    const analysts = await this.staffRepo.find({ rol: 'analyst' });
+    return {
+      data: analysts,
+      message: 'Analysts found successfully',
+    };
+  }
+
   async updateAnalyst(sub: string, updateStaffDto: UpdateStaffDto) {
     await this.staffRepo.findOneAndUpdate({ sub }, updateStaffDto);
     return {

@@ -27,6 +27,18 @@ export class Request extends AbstractEntity<Request> {
   @Column({ nullable: false, type: 'smallint', default: 1 })
   status: number;
 
+  @Column({ nullable: false, type: 'smallint' })
+  loan_term: number;
+
+  @Column({ nullable: false, type: 'int' })
+  amount: number;
+
+  @Column({ nullable: false, type: 'smallint' })
+  guarantee_type: number;
+
+  @Column({ nullable: false, type: 'int' })
+  guarantee_value: number;
+
   @CreateDateColumn({
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP(6)',
