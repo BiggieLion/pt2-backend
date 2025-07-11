@@ -204,4 +204,15 @@ export class RequesterService {
 
     throw new ConflictException('Requester RFC already registered');
   }
+
+  async getRequesterEmail(sub: string) {
+    return await this.requesterRepo.findOne(
+      { sub },
+      { email: true, firstname: true, lastname: true },
+    );
+  }
+
+  async getRequester(sub: string) {
+    return await this.requesterRepo.findOne({ sub });
+  }
 }

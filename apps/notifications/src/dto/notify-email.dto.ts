@@ -8,4 +8,6 @@ export interface NotifyEmailDto {
 export interface Params {
   name?: string;
   creditId?: number;
+  reasonOfRejection?: string;
+  iaScore?: number;
 }

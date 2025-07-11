@@ -13,6 +13,7 @@ import { RequesterService } from './requester.service';
 import { UpdateRequesterDto } from './dto/update-requester.dto';
 import { ChangePasswordDto } from '@app/common';
 import { CurrentUser, JwtAuthGuard, Roles } from '@app/common';
+import { MessagePattern, Payload } from '@nestjs/microservices';
 
 @Controller('requester')
 export class RequesterController {
@@ -79,5 +80,15 @@ export class RequesterController {
     @Body() changePasswordDTO: ChangePasswordDto,
   ) {
     return this.requesterSvc.changePassword(user?.id, changePasswordDTO);
+  }
+
+  @MessagePattern('get-email')
+  getEmail(@Payload() requesterId: string) {
+    return this.requesterSvc.getRequesterEmail(requesterId);
+  }
+
+  @MessagePattern('get-requester')
+  getRequester(@Payload() requesterId: string) {
+    return this.requesterSvc.getRequester(requesterId);
   }
 }

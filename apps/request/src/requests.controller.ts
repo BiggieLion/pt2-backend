@@ -12,6 +12,7 @@ import { RequestsService } from './requests.service';
 import { CreateRequestDto } from './dto/create-request.dto';
 import { UpdateRequestDto } from './dto/update-request.dto';
 import { CurrentUser, JwtAuthGuard, Roles, UserDto } from '@app/common';
+import { RequestIaDto } from './dto/request-ia.dto';
 
 @Controller('requests')
 export class RequestsController {
@@ -27,11 +28,26 @@ export class RequestsController {
     @Body() createRequestDTO: CreateRequestDto,
   ) {
     createRequestDTO.requester_id = userInfo?.id;
+
     return this.requestsService.create(
       createRequestDTO,
       userInfo.email,
       userInfo.name,
     );
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Roles('requester', 'analyst', 'supervisor')
+  @Get('/id/:id')
+  findByRequestId(@Param('id') id: string) {
+    return this.requestsService.fidByRequestId(+id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Roles('supervisor')
+  @Get('/all')
+  findAllRequests() {
+    return this.requestsService.findAllRequests();
   }
 
   @UseGuards(JwtAuthGuard)
@@ -81,6 +97,16 @@ export class RequestsController {
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateRequestDto: UpdateRequestDto) {
     return this.requestsService.update(+id, updateRequestDto);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Roles('analyst', 'supervisor')
+  @Post('/evaluate/:id')
+  sendRequestToAI(
+    @Param('id') creditId: string,
+    @Body() requestIa: RequestIaDto,
+  ) {
+    return this.requestsService.sendRequestToAI(+creditId, requestIa);
   }
 
   @UseGuards(JwtAuthGuard)

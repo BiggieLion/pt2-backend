@@ -1,5 +1,5 @@
 import {
-  IsBoolean,
+  IsArray,
   IsNotEmpty,
   IsNumber,
   IsOptional,
@@ -21,7 +21,7 @@ export class CreateRequestDto {
 
   @IsNumber()
   @IsNotEmpty()
-  credit_id: number;
+  credit_type: number; // 1->Personal, 2->House, 3->Warrant
 
   @IsString()
   @IsOptional()
@@ -35,6 +35,27 @@ export class CreateRequestDto {
   @IsOptional()
   url_address: string;
 
-  @IsBoolean()
-  is_approved: boolean;
+  @IsNumber()
+  @IsOptional()
+  status: number; // 1 -> Created, 2 -> Under revision, 3 -> Approved, 4- -> Rejected
+
+  @IsNumber()
+  @IsNotEmpty()
+  loan_term: number;
+
+  @IsNumber()
+  @IsNotEmpty()
+  amount: number;
+
+  @IsNumber()
+  @IsOptional()
+  guarantee_type: number;
+
+  @IsNumber()
+  @IsOptional()
+  guarantee_value: number;
+
+  @IsArray()
+  @IsOptional()
+  chat: object[];
 }
