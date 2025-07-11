@@ -13,7 +13,7 @@ import { RequesterService } from './requester.service';
 import { UpdateRequesterDto } from './dto/update-requester.dto';
 import { ChangePasswordDto } from '@app/common';
 import { CurrentUser, JwtAuthGuard, Roles } from '@app/common';
-import { MessagePattern, Payload } from '@nestjs/microservices';
+import { EventPattern, MessagePattern, Payload } from '@nestjs/microservices';
 
 @Controller('requester')
 export class RequesterController {
@@ -90,5 +90,14 @@ export class RequesterController {
   @MessagePattern('get-requester')
   getRequester(@Payload() requesterId: string) {
     return this.requesterSvc.getRequester(requesterId);
+  }
+
+  @EventPattern('update-document')
+  updateDocumentFlag(@Payload() documentUpdated: any) {
+    return this.requesterSvc.updateDocumentUploaded(
+      documentUpdated?.sub,
+      documentUpdated?.docType,
+      documentUpdated?.changeToYes,
+    );
   }
 }

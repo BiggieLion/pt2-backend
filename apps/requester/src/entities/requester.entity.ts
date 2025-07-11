@@ -33,14 +33,17 @@ export class Requester extends AbstractEntity<Requester> {
   @Column({ nullable: false, type: 'char' })
   gender: string;
 
-  @Column({ nullable: true, type: 'varchar' })
-  url_ine: string;
+  @Column({ nullable: true, type: 'boolean', default: false })
+  has_ine: boolean;
 
-  @Column({ nullable: true, type: 'varchar' })
-  url_birth_certificate: string;
+  @Column({ nullable: true, type: 'boolean', default: false })
+  has_birth: boolean;
 
-  @Column({ nullable: true, type: 'varchar' })
-  url_address: string;
+  @Column({ nullable: true, type: 'boolean', default: false })
+  has_domicile: boolean;
+
+  @Column({ nullable: true, type: 'boolean', default: false })
+  has_guarantee: boolean;
 
   @Column({ nullable: false, type: 'smallint' })
   count_children: number;
