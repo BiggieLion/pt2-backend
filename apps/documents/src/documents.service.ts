@@ -84,7 +84,7 @@ export class DocumentsService {
         );
       else
         throw new InternalServerErrorException(
-          `Error getting file ${fileType?.toUpperCase()}`,
+          `Error getting file ${fileType?.toUpperCase()}, ${e}`,
         );
     }
   }

@@ -112,6 +112,15 @@ export class RequestsService {
   }
 
   async update(id: number, updateRequestDto: UpdateRequestDto) {
+    if (updateRequestDto?.chat && updateRequestDto?.chat?.length > 0) {
+      let chatSent: Request = await this.requestRepository.findOne(
+        { id },
+        { chat: true },
+      );
+      if (chatSent?.chat && chatSent?.chat?.length > 0) {
+        updateRequestDto.chat = [...chatSent?.chat, ...updateRequestDto?.chat];
+      }
+    }
     return {
       data: await this.requestRepository.findOneAndUpdate(
         { id },

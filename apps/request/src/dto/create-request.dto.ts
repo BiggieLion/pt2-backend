@@ -1,4 +1,10 @@
-import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import {
+  IsArray,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 export class CreateRequestDto {
   @IsString()
@@ -48,4 +54,8 @@ export class CreateRequestDto {
   @IsNumber()
   @IsOptional()
   guarantee_value: number;
+
+  @IsArray()
+  @IsOptional()
+  chat: object[];
 }

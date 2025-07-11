@@ -39,6 +39,9 @@ export class Request extends AbstractEntity<Request> {
   @Column({ nullable: true, type: 'int' })
   guarantee_value: number;
 
+  @Column({ nullable: true, type: 'jsonb', default: [] })
+  chat: object[];
+
   @CreateDateColumn({
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP(6)',
