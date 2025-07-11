@@ -215,4 +215,26 @@ export class RequesterService {
   async getRequester(sub: string) {
     return await this.requesterRepo.findOne({ sub });
   }
+
+  async updateDocumentUploaded(
+    sub: string,
+    typeDoc: string,
+    changeToYes: boolean,
+  ) {
+    const requester: Requester = await this.requesterRepo.findOne({ sub });
+    delete requester.id;
+    if (changeToYes) {
+      if (typeDoc === 'ine') requester.has_ine = true;
+      else if (typeDoc === 'birth') requester.has_birth = true;
+      else if (typeDoc === 'domicile') requester.has_domicile = true;
+      else if (typeDoc === 'guarantee') requester.has_guarantee = true;
+    } else {
+      if (typeDoc === 'ine') requester.has_ine = false;
+      else if (typeDoc === 'birth') requester.has_birth = false;
+      else if (typeDoc === 'domicile') requester.has_domicile = false;
+      else if (typeDoc === 'guarantee') requester.has_guarantee = false;
+    }
+
+    await this.requesterRepo.findOneAndUpdate({ sub }, requester);
+  }
 }

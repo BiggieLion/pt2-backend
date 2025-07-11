@@ -1,7 +1,12 @@
 import { Module } from '@nestjs/common';
 import { DocumentsController } from './documents.controller';
 import { DocumentsService } from './documents.service';
-import { AUTH_SERVICE, ConfigurationModule, LoggerModule } from '@app/common';
+import {
+  AUTH_SERVICE,
+  ConfigurationModule,
+  LoggerModule,
+  REQUESTER_SERVICE,
+} from '@app/common';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { ConfigService } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
@@ -28,6 +33,17 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
           options: {
             host: configSvc.getOrThrow('microservices.auth.host'),
             port: configSvc.getOrThrow('microservices.auth.port'),
+          },
+        }),
+        inject: [ConfigService],
+      },
+      {
+        name: REQUESTER_SERVICE,
+        useFactory: (configSvc: ConfigService) => ({
+          transport: Transport.TCP,
+          options: {
+            host: configSvc.getOrThrow('microservices.requester.host'),
+            port: configSvc.getOrThrow('microservices.requester.port'),
           },
         }),
         inject: [ConfigService],

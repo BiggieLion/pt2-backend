@@ -1,4 +1,5 @@
 import {
+  Inject,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -11,10 +12,16 @@ import {
   S3Client,
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import { REQUESTER_SERVICE } from '@app/common';
+import { ClientProxy } from '@nestjs/microservices';
 
 @Injectable()
 export class DocumentsService {
-  constructor(private readonly configSvc: ConfigService) {}
+  constructor(
+    private readonly configSvc: ConfigService,
+    @Inject(REQUESTER_SERVICE)
+    private readonly requesterSvc: ClientProxy,
+  ) {}
 
   private readonly region: string = this.configSvc.getOrThrow('aws.region');
   private readonly accessKey: string =
@@ -43,7 +50,11 @@ export class DocumentsService {
           Body: fileBuffer,
         }),
       );
-
+      this.requesterSvc.emit('update-document', {
+        sub: userId,
+        docType: fileType,
+        changeToYes: true,
+      });
       return {
         message: `File ${fileType?.toUpperCase()} uploaded successfully`,
       };
@@ -78,11 +89,16 @@ export class DocumentsService {
         data: { url: signedUrl },
       };
     } catch (e) {
-      if (e?.name === 'NotFound')
+      if (e?.name === 'NotFound') {
+        this.requesterSvc.emit('update-document', {
+          sub: userId,
+          docType: fileType,
+          changeToYes: false,
+        });
         throw new NotFoundException(
           `File ${fileType?.toUpperCase()} not found`,
         );
-      else
+      } else
         throw new InternalServerErrorException(
           `Error getting file ${fileType?.toUpperCase()}, ${e}`,
         );
