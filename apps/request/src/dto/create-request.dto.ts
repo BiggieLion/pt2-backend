@@ -23,18 +23,6 @@ export class CreateRequestDto {
   @IsNotEmpty()
   credit_type: number; // 1->Personal, 2->House, 3->Warrant
 
-  @IsString()
-  @IsOptional()
-  url_ine: string;
-
-  @IsString()
-  @IsOptional()
-  url_birth_certificate: string;
-
-  @IsString()
-  @IsOptional()
-  url_address: string;
-
   @IsNumber()
   @IsOptional()
   status: number; // 1 -> Created, 2 -> Under revision, 3 -> Approved, 4- -> Rejected
@@ -42,6 +30,10 @@ export class CreateRequestDto {
   @IsNumber()
   @IsNotEmpty()
   loan_term: number;
+
+  @IsNumber()
+  @IsOptional()
+  score: number;
 
   @IsNumber()
   @IsNotEmpty()

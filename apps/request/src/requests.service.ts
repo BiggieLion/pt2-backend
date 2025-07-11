@@ -143,6 +143,10 @@ export class RequestsService {
     if (requestIaDto.relation) {
       score = Math.floor(Math.random() * 15) + 1;
       message = 'Relation effort to big to be analyzed by AI';
+      await this.requestRepository.findOneAndUpdate(
+        { id: creditId },
+        { score: score, status: 4 },
+      );
       this.notificationSvc.emit('notify-email', {
         email: requester?.email,
         template: 'REQUEST_REJECTED',
@@ -176,7 +180,7 @@ export class RequestsService {
       ) {
         await this.requestRepository.findOneAndUpdate(
           { id: creditId },
-          { status: 4 },
+          { status: 4, score: score?.data?.score },
         );
         this.notificationSvc.emit('notify-email', {
           email: requester?.email,
@@ -197,7 +201,7 @@ export class RequestsService {
       ) {
         await this.requestRepository.findOneAndUpdate(
           { id: creditId },
-          { status: 2 },
+          { status: 2, score: score?.data?.score },
         );
         this.notificationSvc.emit('notify-email', {
           email: requester?.email,
@@ -216,7 +220,7 @@ export class RequestsService {
       ) {
         await this.requestRepository.findOneAndUpdate(
           { id: creditId },
-          { status: 2 },
+          { status: 2, score: score?.data?.score },
         );
         this.notificationSvc.emit('notify-email', {
           email: requester?.email,

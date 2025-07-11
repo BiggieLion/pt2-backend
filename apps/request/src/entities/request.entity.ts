@@ -15,17 +15,11 @@ export class Request extends AbstractEntity<Request> {
   @Column({ nullable: false, type: 'smallint' })
   credit_type: number;
 
-  @Column({ nullable: true, type: 'varchar' })
-  url_ine: string;
-
-  @Column({ nullable: true, type: 'varchar' })
-  url_birth_certificate: string;
-
-  @Column({ nullable: true, type: 'varchar' })
-  url_address: string;
-
   @Column({ nullable: false, type: 'smallint', default: 1 })
   status: number;
+
+  @Column({ nullable: true, type: 'smallint' })
+  score: number;
 
   @Column({ nullable: false, type: 'smallint' })
   loan_term: number;
