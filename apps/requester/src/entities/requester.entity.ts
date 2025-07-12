@@ -60,6 +60,9 @@ export class Requester extends AbstractEntity<Requester> {
   @Column({ nullable: false, type: 'varchar' })
   education_level: string;
 
+  @Column({ nullable: false, type: 'smallint' })
+  occupation_type: number;
+
   @Column({ nullable: false, type: 'integer' })
   days_employed: number;
 

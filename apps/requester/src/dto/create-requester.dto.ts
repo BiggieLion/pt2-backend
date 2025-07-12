@@ -84,6 +84,10 @@ export class CreateRequesterDto {
 
   @IsNumber()
   @IsNotEmpty()
+  occupation_type: number;
+
+  @IsNumber()
+  @IsNotEmpty()
   days_employed: number;
 
   @IsDate()
