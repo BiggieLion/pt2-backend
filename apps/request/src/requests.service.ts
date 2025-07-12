@@ -113,7 +113,7 @@ export class RequestsService {
 
   async update(id: number, updateRequestDto: UpdateRequestDto) {
     if (updateRequestDto?.chat && updateRequestDto?.chat?.length > 0) {
-      let chatSent: Request = await this.requestRepository.findOne(
+      const chatSent: Request = await this.requestRepository.findOne(
         { id },
         { chat: true },
       );
@@ -225,7 +225,7 @@ export class RequestsService {
         this.notificationSvc.emit('notify-email', {
           email: requester?.email,
           template: 'REQUEST_APPROVED',
-          subject: 'Solicitud pre-aceptada',
+          subject: 'Solicitud pre-aprobada',
           params: {
             name: `${requester?.firstname} ${requester?.lastname}`,
             creditId,
