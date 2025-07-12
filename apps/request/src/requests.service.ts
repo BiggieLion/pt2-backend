@@ -1,5 +1,7 @@
 import {
+  BadRequestException,
   HttpException,
+  HttpStatus,
   Inject,
   Injectable,
   NotFoundException,
@@ -28,6 +30,14 @@ export class RequestsService {
     private readonly requesterSvc: ClientProxy,
   ) {}
 
+  private filterSensitiveData(requester: any): any {
+    if (!requester) return {};
+
+    const { email, password, ...filteredData } = requester;
+
+    return filteredData;
+  }
+
   async create(
     createRequestDto: CreateRequestDto,
     email: string,
@@ -48,22 +58,31 @@ export class RequestsService {
   }
 
   async fidByRequestId(id: number) {
-    const request: Request = await this.requestRepository.findOne(
-      { id: id },
-      { requester_id: true },
-    );
-    const requester: any = await lastValueFrom(
-      this.requesterSvc.send('get-requester', request.requester_id),
-    );
-    delete requester?.email;
-    delete requester?.password;
-    return {
-      message: 'Request found successfully',
-      data: {
-        ...((await this.requestRepository.findOne({ id })) || {}),
-        ...(requester || {}),
-      },
-    };
+    if (!id || id <= 0) throw new BadRequestException('Request ID not valid');
+
+    const request: Request = await this.requestRepository.findOne({ id });
+
+    if (!request) throw new NotFoundException('Request not found');
+
+    try {
+      const requester = await lastValueFrom(
+        this.requesterSvc.send('get-email', request.requester_id),
+      );
+      const filteredRequester = this.filterSensitiveData(requester);
+
+      return {
+        message: 'Request found successfully',
+        data: {
+          ...request,
+          ...filteredRequester,
+        },
+      };
+    } catch (e) {
+      throw new HttpException(
+        `Error obtaining requester information: ${e}`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   async findByRequester(sub: string) {
