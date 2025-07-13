@@ -37,27 +37,20 @@ export class DocumentsService {
     },
   });
 
-  private getObjectKey(
-    userId: string,
-    fileType: string,
-    creditId: string,
-  ): string {
-    if (fileType === 'guarantee')
-      return `${userId}-${creditId}-${fileType}.pdf`;
+  private getObjectKey(userId: string, fileType: string): string {
     return `${userId}-${fileType}.pdf`;
   }
 
-  async uploadFile(
-    fileBuffer: Buffer,
-    userId: string,
-    fileType: string,
-    creditId: string,
-  ) {
+  private getGuaranteeKey(userId: string, fileType: string, creditId: string) {
+    return `${userId}-${creditId}-${fileType}.pdf`;
+  }
+
+  async uploadFile(fileBuffer: Buffer, userId: string, fileType: string) {
     try {
       await this.s3Client.send(
         new PutObjectCommand({
           Bucket: this.bucketName,
-          Key: this.getObjectKey(userId, fileType, creditId),
+          Key: this.getObjectKey(userId, fileType),
           Body: fileBuffer,
         }),
       );
@@ -76,12 +69,41 @@ export class DocumentsService {
     }
   }
 
-  async getFile(userId: string, fileType: string, creditId: string) {
+  async uploadGuaranteeFile(
+    fileBuffer: Buffer,
+    userId: string,
+    fileType: string,
+    creditId: string,
+  ) {
+    try {
+      await this.s3Client.send(
+        new PutObjectCommand({
+          Bucket: this.bucketName,
+          Key: this.getGuaranteeKey(userId, fileType, creditId),
+          Body: fileBuffer,
+        }),
+      );
+      this.requesterSvc.emit('update-document', {
+        sub: userId,
+        docType: fileType,
+        changeToYes: true,
+      });
+      return {
+        message: `File ${fileType?.toUpperCase()} uploaded successfully`,
+      };
+    } catch (e) {
+      throw new InternalServerErrorException(
+        `Error uploading file ${fileType?.toUpperCase()}`,
+      );
+    }
+  }
+
+  async getFile(userId: string, fileType: string) {
     try {
       await this.s3Client.send(
         new HeadObjectCommand({
           Bucket: this.bucketName,
-          Key: this.getObjectKey(userId, fileType, creditId),
+          Key: this.getObjectKey(userId, fileType),
         }),
       );
 
@@ -89,7 +111,54 @@ export class DocumentsService {
         this.s3Client,
         new GetObjectCommand({
           Bucket: this.bucketName,
-          Key: this.getObjectKey(userId, fileType, creditId),
+          Key: this.getObjectKey(userId, fileType),
+          ResponseContentType: 'application/pdf',
+        }),
+        { expiresIn: 3600 },
+      );
+
+      return {
+        message: `File ${fileType?.toUpperCase()} found successfully`,
+        data: { url: signedUrl },
+      };
+    } catch (e) {
+      if (e?.name === 'NotFound') {
+        this.requesterSvc.emit('update-document', {
+          sub: userId,
+          docType: fileType,
+          changeToYes: false,
+        });
+        throw new NotFoundException(
+          `File ${fileType?.toUpperCase()} not found`,
+        );
+      } else
+        throw new InternalServerErrorException(
+          `Error getting file ${fileType?.toUpperCase()}, ${e}`,
+        );
+    }
+  }
+
+  async getGuaranteeFile(userId: string, fileType: string, creditId: string) {
+    console.log(
+      'getGuaranteeFile',
+      userId,
+      fileType,
+      creditId,
+      this.getGuaranteeKey(userId, fileType, creditId),
+    );
+    try {
+      await this.s3Client.send(
+        new HeadObjectCommand({
+          Bucket: this.bucketName,
+          Key: this.getGuaranteeKey(userId, fileType, creditId),
+        }),
+      );
+
+      const signedUrl: string = await getSignedUrl(
+        this.s3Client,
+        new GetObjectCommand({
+          Bucket: this.bucketName,
+          Key: this.getGuaranteeKey(userId, fileType, creditId),
           ResponseContentType: 'application/pdf',
         }),
         { expiresIn: 3600 },

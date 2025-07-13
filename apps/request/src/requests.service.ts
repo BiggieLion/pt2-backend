@@ -68,7 +68,7 @@ export class RequestsService {
       );
       lastId = lastCredit?.id;
     } catch (e) {
-      lastId = 1;
+      lastId = 0;
     }
 
     return {

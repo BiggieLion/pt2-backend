@@ -29,9 +29,9 @@ export class DocumentsController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Roles('requester')
+  @Roles('requester', 'analyst', 'supervisor')
   @UseInterceptors(FileInterceptor('file'))
-  @Post('/:creditId/:fileType')
+  @Post(':fileType')
   async uploadFile(
     @UploadedFile(
       new ParseFilePipe({
@@ -44,38 +44,87 @@ export class DocumentsController {
     file: Express.Multer.File,
     @CurrentUser() user: UserDto,
     @Param('fileType') fileType: string,
-    @Param('creditId') creditId: string,
   ) {
     this.validateDocumentType(fileType);
-    return await this.documentsSvc.uploadFile(
+    return await this.documentsSvc.uploadFile(file.buffer, user?.id, fileType);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Roles('requester', 'analyst', 'supervisor')
+  @UseInterceptors(FileInterceptor('file'))
+  @Post(':creditId/guarantee')
+  async uploadGuaranteeFile(
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({ maxSize: 1500000 }),
+          new FileTypeValidator({ fileType: 'application/pdf' }),
+        ],
+      }),
+    )
+    file: Express.Multer.File,
+    @CurrentUser() user: UserDto,
+    @Param('creditId') creditId: string,
+  ) {
+    console.log('<--- user ---<>', user);
+    return await this.documentsSvc.uploadGuaranteeFile(
       file.buffer,
       user?.id,
-      fileType,
+      'guarantee',
       creditId,
     );
   }
 
   @UseGuards(JwtAuthGuard)
   @Roles('requester', 'analyst', 'supervisor')
-  @Get(':creditId/:fileType')
+  @Get(':fileType')
   async getDocument(
     @CurrentUser() user: UserDto,
     @Param('fileType') fileType: string,
-    @Param('creditId') creditId: string,
   ) {
+    console.log('<--- user ---<>', user);
     this.validateDocumentType(fileType);
-    return await this.documentsSvc.getFile(user?.id, fileType, creditId);
+    return await this.documentsSvc.getFile(user?.id, fileType);
   }
 
   @UseGuards(JwtAuthGuard)
   @Roles('requester', 'analyst', 'supervisor')
-  @Get('/:creditId/:userId/:fileType')
+  @Get(':userId/:fileType')
   async getDocumentByUserId(
     @Param('userId') userId: string,
     @Param('fileType') fileType: string,
+  ) {
+    console.log('<--- user ASASDASDASD ---<>', userId);
+    this.validateDocumentType(fileType);
+    return await this.documentsSvc.getFile(userId, fileType);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Roles('requester', 'analyst', 'supervisor')
+  @Get('guarantee/file/:creditId')
+  async getGuaranteeDocument(
+    @CurrentUser() user: UserDto,
     @Param('creditId') creditId: string,
   ) {
-    this.validateDocumentType(fileType);
-    return await this.documentsSvc.getFile(userId, fileType, creditId);
+    return await this.documentsSvc.getGuaranteeFile(
+      user?.id,
+      'guarantee',
+      creditId,
+    );
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Roles('requester', 'analyst', 'supervisor')
+  @Get('/guarantee/:creditId/:userId')
+  async getGuaranteeDocumentByUserId(
+    @Param('creditId') creditId: string,
+    @Param('userId') userId: string,
+  ) {
+    console.log('<--- get id -->>', userId);
+    return await this.documentsSvc.getGuaranteeFile(
+      userId,
+      'guarantee',
+      creditId,
+    );
   }
 }

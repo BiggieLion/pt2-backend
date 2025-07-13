@@ -37,7 +37,7 @@ export abstract class AbstractRepository<T extends AbstractEntity<T>> {
 
     if (!entity) {
       this.logger.warn(
-        `Entity not found with the next conditions: ${where} \n ${select} \n ${relations} `,
+        `Entity not found with the next conditions: ${JSON.stringify(where)} \n ${JSON.stringify(select)} \n ${JSON.stringify(relations)} `,
       );
       throw new NotFoundException('Entity not found');
     }
