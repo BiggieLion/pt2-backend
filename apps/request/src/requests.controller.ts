@@ -38,6 +38,13 @@ export class RequestsController {
 
   @UseGuards(JwtAuthGuard)
   @Roles('requester', 'analyst', 'supervisor')
+  @Get('last')
+  findLastCreditId() {
+    return this.requestsService.getLastCreditId();
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Roles('requester', 'analyst', 'supervisor')
   @Get('/id/:id')
   findByRequestId(@Param('id') id: string) {
     return this.requestsService.fidByRequestId(+id);

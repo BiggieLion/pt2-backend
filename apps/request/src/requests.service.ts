@@ -57,6 +57,26 @@ export class RequestsService {
     };
   }
 
+  async getLastCreditId() {
+    let lastId: number;
+    try {
+      const lastCredit: Request = await this.requestRepository.findOne(
+        {},
+        { id: true },
+        {},
+        { id: 'DESC' },
+      );
+      lastId = lastCredit?.id;
+    } catch (e) {
+      lastId = 1;
+    }
+
+    return {
+      message: 'Last credit id found successfully',
+      data: { lastId },
+    };
+  }
+
   async fidByRequestId(id: number) {
     if (!id || id <= 0) throw new BadRequestException('Request ID not valid');
 

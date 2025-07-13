@@ -2,6 +2,7 @@ import { Logger, NotFoundException } from '@nestjs/common';
 import { AbstractEntity } from './abstract.entity';
 import {
   EntityManager,
+  FindOptionsOrder,
   FindOptionsRelations,
   FindOptionsSelect,
   FindOptionsWhere,
@@ -25,16 +26,18 @@ export abstract class AbstractRepository<T extends AbstractEntity<T>> {
     where: FindOptionsWhere<T>,
     select?: FindOptionsSelect<T>,
     relations?: FindOptionsRelations<T>,
+    order?: FindOptionsOrder<T>,
   ): Promise<T> {
     const entity = await this.itemsRepository.findOne({
       where,
       select,
       relations,
+      order,
     });
 
     if (!entity) {
       this.logger.warn(
-        `Entity not found with the next conditions: ${where}\n${select}\n${relations} `,
+        `Entity not found with the next conditions: ${where} \n ${select} \n ${relations} `,
       );
       throw new NotFoundException('Entity not found');
     }
