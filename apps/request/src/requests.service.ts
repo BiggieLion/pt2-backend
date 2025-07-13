@@ -66,7 +66,7 @@ export class RequestsService {
 
     try {
       const requester = await lastValueFrom(
-        this.requesterSvc.send('get-email', request.requester_id),
+        this.requesterSvc.send('get-requester', request.requester_id),
       );
       const filteredRequester = this.filterSensitiveData(requester);
 

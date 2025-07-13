@@ -37,16 +37,27 @@ export class DocumentsService {
     },
   });
 
-  private getObjectKey(userId: string, fileType: string): string {
+  private getObjectKey(
+    userId: string,
+    fileType: string,
+    creditId: string,
+  ): string {
+    if (fileType === 'guarantee')
+      return `${userId}-${creditId}-${fileType}.pdf`;
     return `${userId}-${fileType}.pdf`;
   }
 
-  async uploadFile(fileBuffer: Buffer, userId: string, fileType: string) {
+  async uploadFile(
+    fileBuffer: Buffer,
+    userId: string,
+    fileType: string,
+    creditId: string,
+  ) {
     try {
       await this.s3Client.send(
         new PutObjectCommand({
           Bucket: this.bucketName,
-          Key: this.getObjectKey(userId, fileType),
+          Key: this.getObjectKey(userId, fileType, creditId),
           Body: fileBuffer,
         }),
       );
@@ -65,12 +76,12 @@ export class DocumentsService {
     }
   }
 
-  async getFile(userId: string, fileType: string) {
+  async getFile(userId: string, fileType: string, creditId: string) {
     try {
       await this.s3Client.send(
         new HeadObjectCommand({
           Bucket: this.bucketName,
-          Key: this.getObjectKey(userId, fileType),
+          Key: this.getObjectKey(userId, fileType, creditId),
         }),
       );
 
@@ -78,7 +89,7 @@ export class DocumentsService {
         this.s3Client,
         new GetObjectCommand({
           Bucket: this.bucketName,
-          Key: this.getObjectKey(userId, fileType),
+          Key: this.getObjectKey(userId, fileType, creditId),
           ResponseContentType: 'application/pdf',
         }),
         { expiresIn: 3600 },

@@ -31,7 +31,7 @@ export class DocumentsController {
   @UseGuards(JwtAuthGuard)
   @Roles('requester')
   @UseInterceptors(FileInterceptor('file'))
-  @Post(':fileType')
+  @Post('/:creditId/:fileType')
   async uploadFile(
     @UploadedFile(
       new ParseFilePipe({
@@ -44,30 +44,38 @@ export class DocumentsController {
     file: Express.Multer.File,
     @CurrentUser() user: UserDto,
     @Param('fileType') fileType: string,
+    @Param('creditId') creditId: string,
   ) {
     this.validateDocumentType(fileType);
-    return await this.documentsSvc.uploadFile(file.buffer, user?.id, fileType);
+    return await this.documentsSvc.uploadFile(
+      file.buffer,
+      user?.id,
+      fileType,
+      creditId,
+    );
   }
 
   @UseGuards(JwtAuthGuard)
   @Roles('requester', 'analyst', 'supervisor')
-  @Get(':fileType')
+  @Get(':creditId/:fileType')
   async getDocument(
     @CurrentUser() user: UserDto,
     @Param('fileType') fileType: string,
+    @Param('creditId') creditId: string,
   ) {
     this.validateDocumentType(fileType);
-    return await this.documentsSvc.getFile(user?.id, fileType);
+    return await this.documentsSvc.getFile(user?.id, fileType, creditId);
   }
 
   @UseGuards(JwtAuthGuard)
   @Roles('requester', 'analyst', 'supervisor')
-  @Get(':userId/:fileType')
+  @Get('/:creditId/:userId/:fileType')
   async getDocumentByUserId(
     @Param('userId') userId: string,
     @Param('fileType') fileType: string,
+    @Param('creditId') creditId: string,
   ) {
     this.validateDocumentType(fileType);
-    return await this.documentsSvc.getFile(userId, fileType);
+    return await this.documentsSvc.getFile(userId, fileType, creditId);
   }
 }
