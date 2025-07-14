@@ -18,6 +18,9 @@ import { EntityClassOrSchema } from '@nestjs/typeorm/dist/interfaces/entity-clas
         synchronize: true,
         autoLoadEntities: true,
         logging: false,
+        ssl: {
+          rejectUnauthorized: false,
+        },
       }),
       inject: [ConfigService],
     }),
