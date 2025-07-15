@@ -49,7 +49,7 @@ export class RequesterController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Roles('analyst', 'supervisor')
+  @Roles('requester', 'analyst', 'supervisor')
   @Patch('/:sub')
   update(
     @Param('sub') sub: string,

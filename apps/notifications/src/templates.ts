@@ -60,7 +60,7 @@ export const requestCreated = (data: Params) => {
   `;
 };
 
-export const requestApproved = (data: Params): string => {
+export const requestPreApproved = (data: Params): string => {
   const { name, creditId, iaScore } = data;
   return `
    <!DOCTYPE html>
@@ -81,7 +81,28 @@ export const requestApproved = (data: Params): string => {
   `;
 };
 
-export const requestRejected = (data: Params): string => {
+export const requestApproved = (data: Params): string => {
+  const { name, creditId } = data;
+  return `
+   <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Document</title>
+        </head>
+        <body>
+            <h2>Hola ${name}!!!</h2>
+            <p>¡Buenas noticias! Tu solicitud de crédito con número de serie ${creditId} fue aprovada.</p>
+            <br />
+            <br />
+            <h3>Equipo de Risky Measurer</h3>
+        </body>
+        </html>
+  `;
+};
+
+export const requestPreRejected = (data: Params): string => {
   const { name, creditId, reasonOfRejection, iaScore } = data;
   return `
   <!DOCTYPE html>
@@ -93,7 +114,7 @@ export const requestRejected = (data: Params): string => {
         </head>
         <body>
             <h2>Hola ${name}!!!</h2>
-            <p>Te informamos que tu solicitud de crédito con número de serie ${creditId} fue puntuada por la IA con ${iaScore} puntos y ha sido rechazada por estos motivos:</p>
+            <p>Te informamos que tu solicitud de crédito con número de serie ${creditId} fue puntuada por la IA con ${iaScore} puntos y ha sido pre-rechazada por estos motivos:</p>
             <p>${reasonOfRejection}</p>
             <br />
             <br />
@@ -117,6 +138,28 @@ export const requestEvaluation = (data: Params): string => {
             <h2>Hola ${name}!!!</h2>
             <p>Te informamos que tu solicitud de crédicto de serie ${creditId} fue puntuada por la IA con ${iaScore} puntos.</p>
             <p>Un analista se pondrá en contacto contigo pronto...</p>
+            <br />
+            <br />
+            <h3>Equipo de Risky Measurer</h3>
+        </body>
+        </html>
+  `;
+};
+
+export const requestRejected = (data: Params): string => {
+  const { name, creditId, reasonOfRejection } = data;
+  return `
+  <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Document</title>
+        </head>
+        <body>
+            <h2>Hola ${name}!!!</h2>
+            <p>Te informamos que tu solicitud de crédito con número de serie ${creditId} ha sido rechazada por estos motivos:</p>
+            <p>${reasonOfRejection}</p>
             <br />
             <br />
             <h3>Equipo de Risky Measurer</h3>

@@ -1,0 +1,96 @@
+version: '3.5'
+
+services:
+  auth:
+    image: 529088267818.dkr.ecr.us-east-1.amazonaws.com/auth:latest
+    env_file: .env.back
+    networks:
+      - network
+    ports:
+      - '3000:3000'
+    depends_on:
+      - db
+    volumes:
+      - .:/usr/src/app
+
+  request:
+    image: 529088267818.dkr.ecr.us-east-1.amazonaws.com/request
+    env_file: .env.back
+    networks:
+      - network
+    ports:
+      - '3002:3002'
+    depends_on:
+      - db
+    volumes:
+      - .:/usr/src/app
+
+  requester:
+    image: 529088267818.dkr.ecr.us-east-1.amazonaws.com/requester
+    env_file: .env.back
+    networks:
+      - network
+    ports:
+      - '3004:3004'
+    depends_on:
+      - db
+    volumes:
+      - .:/usr/src/app
+
+  staff:
+    image: 529088267818.dkr.ecr.us-east-1.amazonaws.com/staff
+    env_file: .env.back
+    networks:
+      - network
+    ports:
+      - '3006:3006'
+    depends_on:
+      - db
+    volumes:
+      - .:/usr/src/app
+
+  notifications:
+    image: 529088267818.dkr.ecr.us-east-1.amazonaws.com/notifications
+    env_file: .env.back
+    networks:
+      - network
+    ports:
+      - '3008:3008'
+    depends_on:
+      - db
+    volumes:
+      - .:/usr/src/app
+
+  documents:
+    image: 529088267818.dkr.ecr.us-east-1.amazonaws.com/documents
+    env_file: .env.back
+    networks:
+      - network
+    ports:
+      - '3010:3010'
+    depends_on:
+      - db
+    volumes:
+      - .:/usr/src/app
+
+  flask:
+    image: 529088267818.dkr.ecr.us-east-1.amazonaws.com/ai
+    env_file: .env.flask
+    networks:
+      - network
+    ports:
+      - '5001:5000'
+
+  db:
+    container_name: risky_db
+    networks:
+      - network
+    image: postgres:15.7
+    env_file:
+      - .env.backend
+    ports:
+      - '54320:5432'
+
+networks:
+  network:
+    driver: bridge

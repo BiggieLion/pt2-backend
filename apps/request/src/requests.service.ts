@@ -89,7 +89,7 @@ export class RequestsService {
         this.requesterSvc.send('get-requester', request.requester_id),
       );
       const filteredRequester = this.filterSensitiveData(requester);
-      
+
       return {
         message: 'Request found successfully',
         data: {
@@ -160,6 +160,36 @@ export class RequestsService {
         updateRequestDto.chat = [...chatSent?.chat, ...updateRequestDto?.chat];
       }
     }
+    if (updateRequestDto?.status) {
+      const request: Request = await this.requestRepository.findOne(
+        { id },
+        { requester_id: true },
+      );
+      const requester: any = await lastValueFrom(
+        this.requesterSvc.send('get-email', request?.requester_id),
+      );
+      if (updateRequestDto?.status === 3) {
+        this.notificationSvc.emit('notify-email', {
+          email: requester?.email,
+          template: 'REQUEST_APPROVED',
+          subject: 'Solicitud aprobada',
+          params: {
+            name: `${requester?.firstname} ${requester?.lastname}`,
+            id,
+          },
+        });
+      } else if (updateRequestDto?.status === 4) {
+        this.notificationSvc.emit('notify-email', {
+          email: requester?.email,
+          template: 'REQUEST_REJECTED',
+          subject: 'Solicitud rechazada',
+          params: {
+            name: `${requester?.firstname} ${requester?.lastname}`,
+            id,
+          },
+        });
+      }
+    }
     return {
       data: await this.requestRepository.findOneAndUpdate(
         { id },
@@ -223,8 +253,8 @@ export class RequestsService {
         );
         this.notificationSvc.emit('notify-email', {
           email: requester?.email,
-          template: 'REQUEST_REJECTED',
-          subject: 'Solicitud rechazada',
+          template: 'REQUEST_PREREJECTED',
+          subject: 'Solicitud pre-rechazada',
           params: {
             name: `${requester?.firstname} ${requester?.lastname}`,
             creditId,
@@ -263,7 +293,7 @@ export class RequestsService {
         );
         this.notificationSvc.emit('notify-email', {
           email: requester?.email,
-          template: 'REQUEST_APPROVED',
+          template: 'REQUEST_PREAPPROVED',
           subject: 'Solicitud pre-aprobada',
           params: {
             name: `${requester?.firstname} ${requester?.lastname}`,
