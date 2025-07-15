@@ -66,7 +66,6 @@ export class DocumentsController {
     @CurrentUser() user: UserDto,
     @Param('creditId') creditId: string,
   ) {
-    console.log('<--- user ---<>', user);
     return await this.documentsSvc.uploadGuaranteeFile(
       file.buffer,
       user?.id,
@@ -82,7 +81,6 @@ export class DocumentsController {
     @CurrentUser() user: UserDto,
     @Param('fileType') fileType: string,
   ) {
-    console.log('<--- user ---<>', user);
     this.validateDocumentType(fileType);
     return await this.documentsSvc.getFile(user?.id, fileType);
   }
@@ -94,7 +92,6 @@ export class DocumentsController {
     @Param('userId') userId: string,
     @Param('fileType') fileType: string,
   ) {
-    console.log('<--- user ASASDASDASD ---<>', userId);
     this.validateDocumentType(fileType);
     return await this.documentsSvc.getFile(userId, fileType);
   }
@@ -120,7 +117,6 @@ export class DocumentsController {
     @Param('creditId') creditId: string,
     @Param('userId') userId: string,
   ) {
-    console.log('<--- get id -->>', userId);
     return await this.documentsSvc.getGuaranteeFile(
       userId,
       'guarantee',

@@ -89,7 +89,7 @@ export class RequestsService {
         this.requesterSvc.send('get-requester', request.requester_id),
       );
       const filteredRequester = this.filterSensitiveData(requester);
-
+      
       return {
         message: 'Request found successfully',
         data: {

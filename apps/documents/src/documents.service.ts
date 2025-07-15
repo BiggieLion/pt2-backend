@@ -139,13 +139,6 @@ export class DocumentsService {
   }
 
   async getGuaranteeFile(userId: string, fileType: string, creditId: string) {
-    console.log(
-      'getGuaranteeFile',
-      userId,
-      fileType,
-      creditId,
-      this.getGuaranteeKey(userId, fileType, creditId),
-    );
     try {
       await this.s3Client.send(
         new HeadObjectCommand({
